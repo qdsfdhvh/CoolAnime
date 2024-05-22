@@ -12,8 +12,8 @@ abstract class IosUIViewControllerComponent(
 ) : UiComponent {
   abstract val uiViewControllerFactory: () -> UIViewController
 
-  @Provides
   @ActivityScope
+  @Provides
   fun uiViewController(bind: MainViewController): UIViewController = bind()
 
   companion object

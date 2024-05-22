@@ -5,8 +5,8 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import presentation.ui.root.RootContent
 
-@Component
 @ActivityScope
+@Component
 abstract class DesktopWindowComponent(
   @get:Provides val window: ComposeWindow,
   @Component val applicationComponent: DesktopApplicationComponent,

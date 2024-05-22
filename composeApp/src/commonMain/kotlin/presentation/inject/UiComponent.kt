@@ -14,8 +14,8 @@ interface UiComponent : HomeUiComponent {
   @Provides
   fun bindRootContent(impl: DefaultRootContent): RootContent = impl
 
-  @Provides
   @ActivityScope
+  @Provides
   fun provideCircuit(
     uiFactories: Set<Ui.Factory>,
     presenterFactories: Set<Presenter.Factory>,

@@ -5,8 +5,8 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import presentation.ui.root.RootContent
 
-@Component
 @ActivityScope
+@Component
 abstract class AndroidActivityComponent(
   @get:Provides val activity: Activity,
   @Component val applicationComponent: AndroidApplicationComponent,
