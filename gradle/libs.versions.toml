@@ -21,6 +21,8 @@ kotlinxSerialization = "1.6.3"
 kotlinxCoroutines = "1.8.1"
 ktor = "2.3.11"
 jetbrainsLifecycle = "2.8.0"
+kotlininject = "0.6.3"
+circuit = "0.20.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -44,7 +46,16 @@ ktor-client-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
+circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+circuitx-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
+circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
+circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
+
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+
+kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
+kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
 
 [bundles]
 kotlinx = [
@@ -58,13 +69,21 @@ ktor-common = [
     "ktor-client-content-negotiation",
     "ktor-client-serialization-kotlinx-json",
 ]
+circuit = [
+    "circuit-foundation",
+    "circuitx-gestureNavigation",
+    "circuit-overlay",
+    "circuit-retained",
+    "circuit-runtime",
+]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinPluginParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composeMultiPlatform" }
 jetbrainsComposeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrainsKotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 googleKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

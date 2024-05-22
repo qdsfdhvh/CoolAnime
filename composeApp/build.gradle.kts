@@ -1,11 +1,18 @@
+import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.support.delegates.DependencyHandlerDelegate
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.jetbrainsComposeCompiler)
+  alias(libs.plugins.kotlinPluginSerialization)
+  alias(libs.plugins.kotlinPluginParcelize)
+  alias(libs.plugins.googleKsp)
 }
 
 kotlin {
@@ -36,6 +43,11 @@ kotlin {
     }
   }
   sourceSets {
+    all {
+      languageSettings {
+        enableLanguageFeature(LanguageFeature.ExpectActualClasses.toString())
+      }
+    }
     commonMain {
       dependencies {
         implementation(compose.runtime)
@@ -47,8 +59,10 @@ kotlin {
 
         implementation(libs.bundles.kotlinx)
         implementation(libs.bundles.ktor.common)
+        implementation(libs.bundles.circuit)
 
         implementation(libs.androidx.lifecycle.viewmodel.compose)
+        implementation(libs.kotlininject.runtime)
       }
     }
     val jvmCommonMain by getting {
@@ -72,7 +86,39 @@ kotlin {
       }
     }
   }
+  targets.configureEach {
+    val isAndroidTarget = platformType == KotlinPlatformType.androidJvm
+    compilations.configureEach {
+      compileTaskProvider.configure {
+        compilerOptions {
+          if (isAndroidTarget) {
+            freeCompilerArgs.addAll(
+              "-P",
+              "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=presentation.platform.Parcelize",
+            )
+          }
+        }
+      }
+    }
+  }
   jvmToolchain(libs.versions.jvmToolchain.get().toInt())
+}
+
+dependencies {
+  kspAll(libs.kotlininject.compiler)
+}
+
+fun DependencyHandlerDelegate.kspAll(dependencyNotation: Any) {
+  kotlin.targets.asSequence()
+    .filter { target ->
+      target.platformType != KotlinPlatformType.common
+    }
+    .forEach { target ->
+      add(
+        "ksp${target.targetName.capitalized()}",
+        dependencyNotation,
+      )
+    }
 }
 
 android {
@@ -103,6 +149,10 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.toVersion(libs.versions.jvmToolchain.get())
   }
+}
+
+ksp {
+  arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
 compose.desktop {

@@ -2,6 +2,8 @@ plugins {
   alias(libs.plugins.androidApplication) apply false
   alias(libs.plugins.androidLibrary) apply false
   alias(libs.plugins.kotlinMultiplatform) apply false
+  alias(libs.plugins.kotlinPluginSerialization) apply false
+  alias(libs.plugins.kotlinPluginParcelize) apply false
   alias(libs.plugins.jetbrainsCompose) apply false
   alias(libs.plugins.jetbrainsComposeCompiler) apply false
   alias(libs.plugins.spotless)
@@ -10,10 +12,12 @@ plugins {
 subprojects {
   configurations.all {
     resolutionStrategy {
-      force("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
-      force("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
-      force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${libs.versions.kotlin.get()}")
-      force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${libs.versions.kotlin.get()}")
+      eachDependency {
+        if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin-")) {
+          useVersion(libs.versions.kotlin.get())
+          because("force kotlin version")
+        }
+      }
     }
   }
 }

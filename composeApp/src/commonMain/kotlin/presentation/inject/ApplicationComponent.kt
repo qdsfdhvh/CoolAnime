@@ -1,0 +1,3 @@
+package presentation.inject
+
+interface ApplicationComponent
