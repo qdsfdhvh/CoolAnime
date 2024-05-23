@@ -87,10 +87,6 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
 
       val screenType = annotation.argumentWith("screen")?.toTypeName()
 
-      // var hasScreen = false
-      // var hasNavigator = false
-      // var hasCircuitContext = false
-
       val params = mutableListOf<TypeName>()
       classDeclaration.primaryConstructor?.parameters?.let { parameters ->
         parameters.forEach { parameter ->
@@ -100,7 +96,6 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
           ) {
             return@forEach
           }
-          // if (parameter.annotations.none { it. == AssistedAnnotation })
           when (val type = parameter.type.toTypeName()) {
             screenType,
             NavigatorClassName,
