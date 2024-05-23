@@ -13,4 +13,5 @@ data class HomeUiState(
 sealed interface HomeUiEvent : CircuitUiEvent {
   data object Add : HomeUiEvent
   data object Del : HomeUiEvent
+  data object GotoDetail : HomeUiEvent
 }

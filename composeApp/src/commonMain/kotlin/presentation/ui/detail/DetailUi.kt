@@ -1,10 +1,8 @@
-package presentation.ui.home
+package presentation.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
@@ -14,34 +12,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.seiko.anime.compiler.annotations.BindUi
-import presentation.route.HomeScreen
+import presentation.route.DetailScreen
+import presentation.widget.BackButton
 
-@BindUi(HomeScreen::class, HomeUiState::class)
+@BindUi(DetailScreen::class, DetailUiState::class)
 @Composable
-fun HomeUi(
-  state: HomeUiState,
+fun DetailUi(
+  state: DetailUiState,
   modifier: Modifier,
 ) {
   val eventSink = state.eventSink
   Scaffold(
     modifier = modifier,
+    topBar = {
+      BackButton {
+        eventSink(DetailUiEvent.Back)
+      }
+    },
   ) { innerPadding ->
     Column(
       modifier = Modifier.padding(innerPadding).fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
     ) {
-      Button(onClick = { eventSink(HomeUiEvent.Add) }) {
-        Text("+")
+      Text("id: ${state.id}")
+      Button(onClick = { eventSink(DetailUiEvent.Request) }) {
+        Text("请求")
       }
-      Text("count: ${state.count}")
-      Button(onClick = { eventSink(HomeUiEvent.Del) }) {
-        Text("-")
-      }
-      Spacer(Modifier.height(32.dp))
-      Button(onClick = { eventSink(HomeUiEvent.GotoDetail) }) {
-        Text("跳转详情")
-      }
+      Text(state.content)
     }
   }
 }

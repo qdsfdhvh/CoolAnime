@@ -2,7 +2,6 @@ package presentation.ui.root
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.slack.circuit.backstack.SaveableBackStack
@@ -33,15 +32,11 @@ class DefaultRootContent(
   ) {
     CircuitCompositionLocals(circuit) {
       MaterialTheme {
-        Scaffold(
-          modifier = modifier,
-        ) {
-          NavigableCircuitContent(
-            backStack = backStack,
-            navigator = navigator,
-            modifier = Modifier.fillMaxSize(),
-          )
-        }
+        NavigableCircuitContent(
+          backStack = backStack,
+          navigator = navigator,
+          modifier = Modifier.fillMaxSize(),
+        )
       }
     }
   }

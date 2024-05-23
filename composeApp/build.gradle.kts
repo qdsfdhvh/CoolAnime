@@ -4,6 +4,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -49,6 +50,7 @@ kotlin {
       }
     }
     commonMain {
+      kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
       dependencies {
         implementation(compose.runtime)
         implementation(compose.foundation)
@@ -61,8 +63,11 @@ kotlin {
         implementation(libs.bundles.ktor.common)
         implementation(libs.bundles.circuit)
 
-        implementation(libs.androidx.lifecycle.viewmodel.compose)
+        implementation(projects.compiler.annotations)
+
+        // implementation(libs.androidx.lifecycle.viewmodel.compose)
         implementation(libs.kotlininject.runtime)
+        implementation(libs.kermit)
       }
     }
     val jvmCommonMain by getting {
@@ -104,7 +109,12 @@ kotlin {
   jvmToolchain(libs.versions.jvmToolchain.get().toInt())
 }
 
+ksp {
+  arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}
+
 dependencies {
+  add("kspCommonMainMetadata", projects.compiler)
   kspAll(libs.kotlininject.compiler)
 }
 
@@ -119,6 +129,12 @@ fun DependencyHandlerDelegate.kspAll(dependencyNotation: Any) {
         dependencyNotation,
       )
     }
+}
+
+tasks.withType(KotlinCompilationTask::class.java).configureEach {
+  if (name != "kspCommonMainKotlinMetadata") {
+    dependsOn("kspCommonMainKotlinMetadata")
+  }
 }
 
 android {
@@ -149,10 +165,6 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.toVersion(libs.versions.jvmToolchain.get())
   }
-}
-
-ksp {
-  arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }
 
 compose.desktop {
