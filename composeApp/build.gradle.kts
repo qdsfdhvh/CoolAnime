@@ -53,9 +53,9 @@ kotlin {
       kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
       dependencies {
         implementation(compose.runtime)
-        implementation(compose.foundation)
-        implementation(compose.material)
         implementation(compose.ui)
+        implementation(compose.foundation)
+        implementation(compose.material3)
         implementation(compose.components.resources)
         implementation(compose.components.uiToolingPreview)
 
