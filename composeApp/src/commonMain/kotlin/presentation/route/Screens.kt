@@ -7,6 +7,12 @@ import presentation.platform.Parcelize
 object HomeScreen : AppScreen("Home")
 
 @Parcelize
+object ScheduleScreen : AppScreen("Schedule")
+
+@Parcelize
+object MineScreen : AppScreen("Mine")
+
+@Parcelize
 data class DetailScreen(val id: Long) : AppScreen("Detail")
 
 abstract class AppScreen(val name: String) : Screen {

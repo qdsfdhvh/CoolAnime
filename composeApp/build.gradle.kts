@@ -68,6 +68,10 @@ kotlin {
         // implementation(libs.androidx.lifecycle.viewmodel.compose)
         implementation(libs.kotlininject.runtime)
         implementation(libs.kermit)
+        implementation(libs.haze.haze)
+        implementation(libs.haze.materials)
+        implementation(libs.compose.material3.windowsizeclass)
+        implementation(libs.compottie)
       }
     }
     val jvmCommonMain by getting {
@@ -165,6 +169,12 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.toVersion(libs.versions.jvmToolchain.get())
   }
+}
+
+compose.resources {
+  publicResClass = true
+  packageOfResClass = "com.seiko.anime"
+  generateResClass = always
 }
 
 compose.desktop {
