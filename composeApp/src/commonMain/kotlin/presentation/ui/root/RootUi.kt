@@ -65,6 +65,14 @@ fun RootUi(
     derivedStateOf { backStack.last().screen }
   }
 
+  val isShowBar by remember(backStack) {
+    derivedStateOf {
+      backStack.first().screen.let {
+        it is HomeScreen || it is ScheduleScreen || it is MineScreen
+      }
+    }
+  }
+
   val hazeState = remember { HazeState() }
   val navigationItems = remember { buildHomeNavigationItems() }
 
@@ -72,7 +80,7 @@ fun RootUi(
     modifier = modifier,
     hazeState = hazeState,
     bottomBar = {
-      if (navigationType == NavigationType.BOTTOM_NAVIGATION) {
+      if (isShowBar && navigationType == NavigationType.BOTTOM_NAVIGATION) {
         HomeNavigationBar(
           selectScreen = rootScreen,
           navigationItems = navigationItems,
@@ -98,31 +106,33 @@ fun RootUi(
     },
   ) {
     Row(Modifier.fillMaxSize()) {
-      when (navigationType) {
-        NavigationType.RAIL -> {
-          HomeNavigationRail(
-            selectScreen = rootScreen,
-            navigationItems = navigationItems,
-            onNavigationItemClicked = {
-              navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
-            },
-            modifier = Modifier.fillMaxHeight(),
-          )
-          VerticalDivider()
-        }
+      if (isShowBar) {
+        when (navigationType) {
+          NavigationType.RAIL -> {
+            HomeNavigationRail(
+              selectScreen = rootScreen,
+              navigationItems = navigationItems,
+              onNavigationItemClicked = {
+                navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
+              },
+              modifier = Modifier.fillMaxHeight(),
+            )
+            VerticalDivider()
+          }
 
-        NavigationType.PERMANENT_DRAWER -> {
-          HomeNavigationDrawer(
-            selectScreen = rootScreen,
-            navigationItems = navigationItems,
-            onNavigationItemClicked = {
-              navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
-            },
-            modifier = Modifier.fillMaxHeight(),
-          )
-        }
+          NavigationType.PERMANENT_DRAWER -> {
+            HomeNavigationDrawer(
+              selectScreen = rootScreen,
+              navigationItems = navigationItems,
+              onNavigationItemClicked = {
+                navigator.resetRootIfDifferent(it, saveState = true, restoreState = true)
+              },
+              modifier = Modifier.fillMaxHeight(),
+            )
+          }
 
-        NavigationType.BOTTOM_NAVIGATION -> Unit
+          NavigationType.BOTTOM_NAVIGATION -> Unit
+        }
       }
       ContentWithOverlays(
         modifier = Modifier.weight(1f).fillMaxHeight(),
