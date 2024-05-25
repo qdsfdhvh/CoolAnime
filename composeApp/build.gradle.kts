@@ -65,7 +65,9 @@ kotlin {
 
         implementation(projects.compiler.annotations)
 
-        // implementation(libs.androidx.lifecycle.viewmodel.compose)
+        implementation(libs.androidx.paging.common)
+        implementation(projects.thirdparty.androidx.paging.compose)
+
         implementation(libs.kotlininject.runtime)
         implementation(libs.kermit)
         implementation(libs.haze.haze)

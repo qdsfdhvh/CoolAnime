@@ -31,3 +31,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":compiler")
 include(":compiler:annotations")
+include(":thirdparty:androidx:paging:compose")
