@@ -72,6 +72,7 @@ kotlin {
         implementation(libs.haze.materials)
         implementation(libs.compose.material3.windowsizeclass)
         implementation(libs.compottie)
+        implementation(libs.imageLoader)
       }
     }
     val jvmCommonMain by getting {

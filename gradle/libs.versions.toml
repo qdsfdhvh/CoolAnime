@@ -65,6 +65,7 @@ haze-haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 compose-material3-windowsizeclass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version = "0.5.0" }
 compottie = { module = "io.github.alexzhirkevich:compottie", version = "1.1.2" }
+imageLoader = { module = "io.github.qdsfdhvh:image-loader", version = "1.8.0" }
 
 [bundles]
 kotlinx = [
