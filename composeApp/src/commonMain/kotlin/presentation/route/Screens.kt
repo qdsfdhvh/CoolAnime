@@ -13,7 +13,7 @@ object ScheduleScreen : AppScreen("Schedule")
 object MineScreen : AppScreen("Mine")
 
 @Parcelize
-data class DetailScreen(val id: Long) : AppScreen("Detail")
+data class DetailScreen(val id: Int) : AppScreen("Detail")
 
 abstract class AppScreen(val name: String) : Screen {
   open val arguments: Map<String, *>? = null

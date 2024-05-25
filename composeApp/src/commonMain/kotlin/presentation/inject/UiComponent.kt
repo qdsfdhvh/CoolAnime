@@ -6,6 +6,7 @@ import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Provides
 import presentation.ui.root.DefaultRootContent
 import presentation.ui.root.RootContent
+import presentation.util.logging.AppLogger
 
 interface UiComponent : BindUiComponent, BindPresenterComponent {
 
@@ -18,6 +19,7 @@ interface UiComponent : BindUiComponent, BindPresenterComponent {
   fun provideCircuit(
     uiFactories: Set<Ui.Factory>,
     presenterFactories: Set<Presenter.Factory>,
+    logger: AppLogger,
   ): Circuit = Circuit.Builder()
     .addUiFactories(uiFactories)
     .addPresenterFactories(presenterFactories)

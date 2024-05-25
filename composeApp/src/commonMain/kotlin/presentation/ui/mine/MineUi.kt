@@ -2,6 +2,7 @@ package presentation.ui.mine
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +19,7 @@ fun MineUi(
 ) {
   val eventSink = state.eventSink
   Column(
-    modifier = modifier,
+    modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
   ) {

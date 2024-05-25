@@ -1,4 +1,4 @@
-package data.remote
+package data.remote.inject
 
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin

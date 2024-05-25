@@ -6,7 +6,7 @@ import com.slack.circuit.runtime.CircuitUiState
 
 @Immutable
 data class DetailUiState(
-  val id: Long,
+  val id: Int,
   val content: String,
   val eventSink: (DetailUiEvent) -> Unit,
 ) : CircuitUiState
