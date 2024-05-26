@@ -108,7 +108,7 @@ kotlin {
           if (isAndroidTarget) {
             freeCompilerArgs.addAll(
               "-P",
-              "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=presentation.platform.Parcelize",
+              "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=app.util.platform.Parcelize",
             )
           }
         }

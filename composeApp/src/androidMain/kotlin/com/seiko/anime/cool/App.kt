@@ -1,8 +1,8 @@
 package com.seiko.anime.cool
 
 import android.app.Application
-import presentation.inject.AndroidApplicationComponent
-import presentation.inject.create
+import app.inject.AndroidApplicationComponent
+import app.inject.create
 
 class App : Application() {
 

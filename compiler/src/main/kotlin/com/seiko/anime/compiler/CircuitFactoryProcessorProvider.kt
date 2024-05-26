@@ -254,7 +254,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     if (presenters.isEmpty()) return
 
     val className = "BindPresenterComponent"
-    FileSpec.builder("presentation.inject", className)
+    FileSpec.builder("app.inject", className)
       .addType(
         TypeSpec.interfaceBuilder(className)
           .apply {
@@ -292,7 +292,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     if (uis.isEmpty()) return
 
     val className = "BindUiComponent"
-    FileSpec.builder("presentation.inject", className)
+    FileSpec.builder("app.inject", className)
       .addType(
         TypeSpec.interfaceBuilder(className)
           .apply {

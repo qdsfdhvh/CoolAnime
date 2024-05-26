@@ -6,7 +6,7 @@ val InjectAnnotation = ClassName("me.tatarka.inject.annotations", "Inject")
 val AssistedAnnotation = ClassName("me.tatarka.inject.annotations", "Assisted")
 val IntoSetClassName = ClassName("me.tatarka.inject.annotations", "IntoSet")
 val ProvidesClassName = ClassName("me.tatarka.inject.annotations", "Provides")
-val ActivityScopeClassName = ClassName("presentation.inject", "ActivityScope")
+val ActivityScopeClassName = ClassName("app.inject", "ActivityScope")
 
 val PresenterClassName = ClassName("com.slack.circuit.runtime.presenter", "Presenter")
 val PresenterFactoryClassName = ClassName("com.slack.circuit.runtime.presenter", "Presenter", "Factory")

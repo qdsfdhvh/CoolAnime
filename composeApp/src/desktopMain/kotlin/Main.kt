@@ -1,16 +1,15 @@
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import app.inject.DesktopApplicationComponent
+import app.inject.DesktopWindowComponent
+import app.inject.create
+import app.route.HomeScreen
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import presentation.inject.DesktopApplicationComponent
-import presentation.inject.DesktopWindowComponent
-import presentation.inject.create
-import presentation.route.HomeScreen
 
 fun main() = application {
   val applicationComponent = remember {

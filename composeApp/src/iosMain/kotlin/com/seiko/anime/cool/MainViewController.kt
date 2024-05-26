@@ -2,12 +2,12 @@ package com.seiko.anime.cool
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
+import app.route.HomeScreen
+import app.ui.feat.root.RootContent
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import me.tatarka.inject.annotations.Inject
 import platform.UIKit.UIViewController
-import presentation.route.HomeScreen
-import presentation.ui.root.RootContent
 
 typealias MainViewController = () -> UIViewController
 
