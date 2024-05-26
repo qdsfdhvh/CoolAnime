@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.ScheduleScreen
-import com.seiko.anime.compiler.annotations.CircuitInject
+import com.seiko.anime.compiler.annotations.BindUi
 
-@CircuitInject(ScheduleScreen::class)
+@BindUi(ScheduleScreen::class)
 @Composable
 fun ScheduleUi(
   state: ScheduleUiState,

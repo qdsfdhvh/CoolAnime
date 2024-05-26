@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.MineScreen
-import com.seiko.anime.compiler.annotations.CircuitInject
+import com.seiko.anime.compiler.annotations.BindUi
 
-@CircuitInject(MineScreen::class)
+@BindUi(MineScreen::class)
 @Composable
 fun MineUi(
   state: MineUiState,

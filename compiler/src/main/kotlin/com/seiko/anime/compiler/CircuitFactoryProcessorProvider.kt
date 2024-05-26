@@ -12,13 +12,14 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.KSVisitorVoid
-import com.seiko.anime.compiler.annotations.CircuitInject
+import com.seiko.anime.compiler.annotations.BindPresenter
+import com.seiko.anime.compiler.annotations.BindUi
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
@@ -49,15 +50,15 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
       codeGenerator = codeGenerator,
       logger = logger,
     )
-    val presenters = resolver.getSymbolsWithAnnotation(CIRCUIT_INJECT_NAME)
-      .filterIsInstance<KSClassDeclaration>()
+    val presenters = resolver.getSymbolsWithAnnotation(BIND_PRESENTER_NAME)
+      .filterIsInstance<KSFunctionDeclaration>()
       .toList()
 
     val uiVisitor = UiVisitor(
       codeGenerator = codeGenerator,
       logger = logger,
     )
-    val uis = resolver.getSymbolsWithAnnotation(CIRCUIT_INJECT_NAME)
+    val uis = resolver.getSymbolsWithAnnotation(BIND_UI_NAME)
       .filterIsInstance<KSFunctionDeclaration>()
       .toList()
 
@@ -70,71 +71,52 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     return emptyList()
   }
 
-  class PresenterVisitor(
+  inner class PresenterVisitor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
   ) : KSVisitorVoid() {
-    override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-      val className = classDeclaration.simpleName.asString() + "Factory"
-      val presenterFactoryName = "presenterFactory"
-      val annotation = classDeclaration.findAnnotationType(CircuitInject::class)
+
+    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
+      val className = function.simpleName.asString() + "Factory"
+
+      val annotation = function.findAnnotationType(BindPresenter::class)
       if (annotation == null) {
-        logger.error("@BindPresenter annotation not found", classDeclaration)
+        logger.error("@BindPresenter annotation not found", function)
         return
       }
 
       val screenType = annotation.argumentWith("screen")?.toTypeName()
 
-      val params = mutableListOf<TypeName>()
-      classDeclaration.primaryConstructor?.parameters?.let { parameters ->
-        parameters.forEach { parameter ->
-          if (parameter.annotations.none {
-              it.annotationType.resolve().toTypeName() == AssistedAnnotation
-            }
-          ) {
-            return@forEach
-          }
-          when (val type = parameter.type.toTypeName()) {
-            screenType,
-            NavigatorClassName,
-            CircuitContextClassName,
-            -> {
-              params.add(type)
-            }
-
-            else -> Unit
-          }
-        }
-      }
-
-      FileSpec.builder(classDeclaration.packageName.asString(), className)
+      FileSpec.builder(function.packageName.asString(), className)
         .addType(
           TypeSpec.classBuilder(className)
             .addAnnotation(InjectAnnotation)
             .apply {
-              val presenterFactoryType = LambdaTypeName.get(
-                receiver = null,
-                parameters = params.map {
-                  ParameterSpec("", it)
-                },
-                returnType = classDeclaration.toClassName(),
-              )
-              primaryConstructor(
-                FunSpec.constructorBuilder()
-                  .addParameter(
-                    ParameterSpec.builder(
-                      presenterFactoryName,
-                      presenterFactoryType,
-                    ).build(),
+              function.parameters.forEach { parameter ->
+                if (parameter.annotations.none {
+                    it.annotationType.resolve().toTypeName() == AssistedAnnotation
+                  }
+                ) {
+                  val parameterName = parameter.name?.asString().orEmpty()
+                  val parameterType = parameter.type.toTypeName()
+                  primaryConstructor(
+                    FunSpec.constructorBuilder()
+                      .addParameter(
+                        ParameterSpec.builder(
+                          parameterName,
+                          parameterType,
+                        ).build(),
+                      )
+                      .build(),
                   )
-                  .build(),
-              )
-              addProperty(
-                PropertySpec.builder(presenterFactoryName, presenterFactoryType)
-                  .initializer(presenterFactoryName)
-                  .addModifiers(KModifier.PRIVATE)
-                  .build(),
-              )
+                  addProperty(
+                    PropertySpec.builder(parameterName, parameterType)
+                      .initializer(parameterName)
+                      .addModifiers(KModifier.PRIVATE)
+                      .build(),
+                  )
+                }
+              }
             }
             .addSuperinterface(PresenterFactoryClassName)
             .addFunction(
@@ -142,7 +124,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("screen", ScreenClassName)
                 .addParameter("navigator", NavigatorClassName)
-                .addParameter("context", CircuitContextClassName)
+                // .addParameter("context", CircuitContextClassName)
                 .returns(
                   PresenterClassName
                     .parameterizedBy(TypeVariableName("*"))
@@ -152,18 +134,37 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                   buildCodeBlock {
                     beginControlFlow("return when (screen)")
                     withIndent {
-                      addStatement("is %L -> %N(", screenType, presenterFactoryName)
+                      beginControlFlow("is %L -> %L", screenType, PresenterLambdaClassName)
+                      addStatement("%L(", function)
                       withIndent {
-                        params.forEach { type ->
-                          when (type) {
-                            screenType -> addStatement("screen,")
-                            NavigatorClassName -> addStatement("navigator,")
-                            CircuitContextClassName -> addStatement("context,")
-                            else -> Unit
+                        function.parameters.forEach { parameter ->
+                          val parameterName = parameter.name?.asString().orEmpty()
+                          if (parameter.annotations.none {
+                              it.annotationType.resolve().toTypeName() == AssistedAnnotation
+                            }
+                          ) {
+                            addStatement("%L = %L,", parameterName, parameterName)
+                          } else {
+                            when (parameter.type.resolve().toTypeName()) {
+                              screenType -> addStatement(
+                                "%L = screen,",
+                                parameterName,
+                              )
+
+                              NavigatorClassName -> addStatement(
+                                "%L = navigator,",
+                                parameterName,
+                              )
+
+                              else -> {
+                                logger.error("The parameter must be Screen or Navigator", parameter)
+                              }
+                            }
                           }
                         }
                       }
                       addStatement(")")
+                      endControlFlow()
                       addStatement("else -> null")
                     }
                     endControlFlow()
@@ -175,30 +176,26 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
         )
         .build().writeTo(
           codeGenerator,
-          Dependencies(false, classDeclaration.containingFile!!),
+          Dependencies(false, function.containingFile!!),
         )
     }
   }
 
-  class UiVisitor(
+  inner class UiVisitor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
   ) : KSVisitorVoid() {
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
       val className = function.simpleName.asString() + "Factory"
 
-      val annotation = function.findAnnotationType(CircuitInject::class)
+      val annotation = function.findAnnotationType(BindUi::class)
       if (annotation == null) {
         logger.error("@BindUi annotation not found", function)
         return
       }
 
-      val uiStateType =
-        function.parameters.firstOrNull()?.type?.resolve()?.declaration as? KSClassDeclaration
-      if (uiStateType == null || uiStateType.superTypes.none {
-          it.resolve().toClassName() == CircuitUiStateClassName
-        }
-      ) {
+      val uiStateType = function.parameters.firstOrNull()?.asClassDeclaration()
+      if (uiStateType == null || uiStateType.isInterfaceFrom(BaseUiStateClassName)) {
         logger.error("The first parameter must be CircuitUiState", function)
         return
       }
@@ -212,7 +209,6 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
               FunSpec.builder("create")
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("screen", ScreenClassName)
-                .addParameter("context", CircuitContextClassName)
                 .returns(
                   UiClassName
                     .parameterizedBy(TypeVariableName("*"))
@@ -250,7 +246,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     }
   }
 
-  private fun generateBindPresenterComponent(presenters: List<KSClassDeclaration>) {
+  private fun generateBindPresenterComponent(presenters: List<KSFunctionDeclaration>) {
     if (presenters.isEmpty()) return
 
     val className = "BindPresenterComponent"
@@ -327,8 +323,13 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
   }
 
   companion object {
-    private val CIRCUIT_INJECT_NAME =
-      requireNotNull(CircuitInject::class.qualifiedName) {
+    private val BIND_UI_NAME =
+      requireNotNull(BindUi::class.qualifiedName) {
+        "Can not get qualifiedName for @BindUi"
+      }
+
+    private val BIND_PRESENTER_NAME =
+      requireNotNull(BindPresenter::class.qualifiedName) {
         "Can not get qualifiedName for @BindPresenter"
       }
   }
@@ -342,4 +343,15 @@ private fun <T : Any> KSAnnotated.findAnnotationType(annotationKClass: KClass<T>
 
 private fun KSAnnotation.argumentWith(name: String): KSType? {
   return arguments.find { it.name?.getShortName() == name }?.value as? KSType
+}
+
+private fun KSValueParameter.asClassDeclaration(): KSClassDeclaration? {
+  return type.resolve().declaration as? KSClassDeclaration
+}
+
+private fun KSClassDeclaration.isInterfaceFrom(typeName: TypeName): Boolean {
+  return superTypes.any {
+    (it.resolve().declaration as? KSClassDeclaration)?.isInterfaceFrom(typeName)
+      ?: (it.resolve().toTypeName() == typeName)
+  }
 }

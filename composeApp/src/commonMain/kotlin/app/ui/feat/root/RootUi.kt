@@ -10,28 +10,25 @@ import androidx.compose.ui.Modifier
 import app.route.HomeScreen
 import app.route.MineScreen
 import app.route.ScheduleScreen
-import com.slack.circuit.backstack.SaveableBackStack
-import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuitx.gesturenavigation.GestureNavigationDecoration
+import app.ui.component.navigation.runtime.NavHost
+import app.ui.component.navigation.runtime.Navigator
+import app.ui.component.navigation.screen.Screen
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RootUi(
-  backStack: SaveableBackStack,
   navigator: Navigator,
   windowSizeClass: WindowSizeClass,
   modifier: Modifier = Modifier,
 ) {
-  val rootScreen by remember(backStack) {
-    derivedStateOf { backStack.last().screen }
+  val rootScreen by remember(navigator.backStacks) {
+    derivedStateOf { navigator.backStacks.first().screen }
   }
 
-  val isShowBar by remember(backStack) {
+  val isShowBar by remember(navigator.backStacks) {
     derivedStateOf {
-      backStack.first().screen.let {
+      navigator.backStacks.last().screen.let {
         it is HomeScreen || it is ScheduleScreen || it is MineScreen
       }
     }
@@ -56,12 +53,8 @@ fun RootUi(
     },
     modifier = modifier,
   ) {
-    NavigableCircuitContent(
-      backStack = backStack,
+    NavHost(
       navigator = navigator,
-      decoration = remember(navigator) {
-        GestureNavigationDecoration(onBackInvoked = navigator::pop)
-      },
       modifier = Modifier.fillMaxSize(),
     )
   }
@@ -92,8 +85,10 @@ private fun Navigator.resetRootIfDifferent(
   saveState: Boolean = false,
   restoreState: Boolean = false,
 ) {
-  val backStack = peekBackStack()
-  if (backStack.size > 1 || backStack.lastOrNull() != screen) {
-    resetRoot(screen, saveState, restoreState)
-  }
+  // TODO: support saveState & restoreState
+  replaceAll(screen)
+  // val backStack = peekBackStack()
+  // if (backStack.size > 1 || backStack.lastOrNull() != screen) {
+  //   resetRoot(screen, saveState, restoreState)
+  // }
 }

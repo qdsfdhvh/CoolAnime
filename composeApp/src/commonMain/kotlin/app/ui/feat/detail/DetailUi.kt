@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.DetailScreen
-import com.seiko.anime.compiler.annotations.CircuitInject
+import com.seiko.anime.compiler.annotations.BindUi
 
-@CircuitInject(DetailScreen::class)
+@BindUi(DetailScreen::class)
 @Composable
 fun DetailUi(
   state: DetailUiState,

@@ -1,12 +1,12 @@
 package app.ui.feat.mine
 
 import androidx.compose.runtime.Immutable
-import com.slack.circuit.runtime.CircuitUiEvent
-import com.slack.circuit.runtime.CircuitUiState
+import app.ui.component.navigation.runtime.BaseUiEvent
+import app.ui.component.navigation.runtime.BaseUiState
 
 @Immutable
 data class MineUiState(
   val eventSink: (MineEvent) -> Unit,
-) : CircuitUiState
+) : BaseUiState
 
-sealed interface MineEvent : CircuitUiEvent
+sealed interface MineEvent : BaseUiEvent

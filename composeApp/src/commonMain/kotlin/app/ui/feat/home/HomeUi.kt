@@ -19,9 +19,9 @@ import app.route.HomeScreen
 import app.ui.component.state.checkState
 import app.ui.widget.AnimeGridHead
 import app.ui.widget.ExpandedAnimeCard
-import com.seiko.anime.compiler.annotations.CircuitInject
+import com.seiko.anime.compiler.annotations.BindUi
 
-@CircuitInject(HomeScreen::class)
+@BindUi(HomeScreen::class)
 @Composable
 fun HomeUi(
   state: HomeUiState,

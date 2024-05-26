@@ -1,7 +1,7 @@
 package app.route
 
+import app.ui.component.navigation.screen.Screen
 import app.util.platform.Parcelize
-import com.slack.circuit.runtime.screen.Screen
 
 @Parcelize
 object HomeScreen : AppScreen("Home")

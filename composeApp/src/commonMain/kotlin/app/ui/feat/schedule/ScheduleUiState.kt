@@ -1,12 +1,12 @@
 package app.ui.feat.schedule
 
 import androidx.compose.runtime.Immutable
-import com.slack.circuit.runtime.CircuitUiEvent
-import com.slack.circuit.runtime.CircuitUiState
+import app.ui.component.navigation.runtime.BaseUiEvent
+import app.ui.component.navigation.runtime.BaseUiState
 
 @Immutable
 data class ScheduleUiState(
   val eventSink: (ScheduleEvent) -> Unit,
-) : CircuitUiState
+) : BaseUiState
 
-sealed interface ScheduleEvent : CircuitUiEvent
+sealed interface ScheduleEvent : BaseUiEvent

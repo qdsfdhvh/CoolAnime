@@ -62,7 +62,8 @@ kotlin {
 
         implementation(libs.bundles.kotlinx)
         implementation(libs.bundles.ktor.common)
-        implementation(libs.bundles.circuit)
+        // implementation(libs.bundles.circuit)
+        implementation(libs.bundles.lifecycle)
 
         implementation(projects.compiler.annotations)
 
@@ -77,6 +78,13 @@ kotlin {
         implementation(libs.compottie)
         implementation(libs.imageLoader)
         implementation(libs.ksoup)
+        implementation(libs.uuid)
+        implementation(libs.molecule.runtime)
+      }
+    }
+    commonTest {
+      dependencies {
+        implementation(kotlin("test"))
       }
     }
     val jvmCommonMain by getting {

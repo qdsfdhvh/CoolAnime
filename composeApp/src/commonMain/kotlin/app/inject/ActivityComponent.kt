@@ -1,11 +1,10 @@
 package app.inject
 
+import app.ui.component.navigation.presenter.Presenter
+import app.ui.component.navigation.runtime.Navigation
+import app.ui.component.navigation.ui.Ui
 import app.ui.feat.root.DefaultRootContent
 import app.ui.feat.root.RootContent
-import app.util.logging.AppLogger
-import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Provides
 
 interface ActivityComponent : BindUiComponent, BindPresenterComponent {
@@ -16,12 +15,13 @@ interface ActivityComponent : BindUiComponent, BindPresenterComponent {
 
   @ActivityScope
   @Provides
-  fun provideCircuit(
+  fun provideNavigation(
     uiFactories: Set<Ui.Factory>,
     presenterFactories: Set<Presenter.Factory>,
-    logger: AppLogger,
-  ): Circuit = Circuit.Builder()
-    .addUiFactories(uiFactories)
-    .addPresenterFactories(presenterFactories)
-    .build()
+  ): Navigation {
+    return Navigation.Builder()
+      .addUiFactories(uiFactories)
+      .addPresenterFactories(presenterFactories)
+      .build()
+  }
 }

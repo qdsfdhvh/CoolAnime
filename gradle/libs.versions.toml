@@ -23,7 +23,7 @@ kotlinxCoroutines = "1.8.1"
 ktor = "2.3.11"
 jetbrainsLifecycle = "2.8.0"
 kotlininject = "0.6.3"
-circuit = "0.20.0"
+#circuit = "0.20.0"
 haze = "0.7.1"
 
 [libraries]
@@ -35,6 +35,7 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrainsLifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrainsLifecycle" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
 
@@ -50,11 +51,11 @@ ktor-client-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
-circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
-circuitx-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
-circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
-circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
-circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
+#circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+#circuitx-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
+#circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
+#circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
+#circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
 
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version = "1.14.2" }
@@ -69,6 +70,8 @@ compose-material3-windowsizeclass = { module = "dev.chrisbanes.material3:materia
 compottie = { module = "io.github.alexzhirkevich:compottie", version = "1.1.2" }
 imageLoader = { module = "io.github.qdsfdhvh:image-loader", version = "1.8.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.2" }
+uuid = { module = "com.benasher44:uuid", version = "0.8.4" }
+molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version = "1.4.3" }
 
 [bundles]
 kotlinx = [
@@ -83,12 +86,16 @@ ktor-common = [
     "ktor-client-content-negotiation",
     "ktor-client-serialization-kotlinx-json",
 ]
-circuit = [
-    "circuit-foundation",
-    "circuitx-gestureNavigation",
-    "circuit-overlay",
-    "circuit-retained",
-    "circuit-runtime",
+#circuit = [
+#    "circuit-foundation",
+#    "circuitx-gestureNavigation",
+#    "circuit-overlay",
+#    "circuit-retained",
+#    "circuit-runtime",
+#]
+lifecycle = [
+    "androidx-lifecycle-runtime-compose",
+    "androidx-lifecycle-viewmodel-compose",
 ]
 
 [plugins]

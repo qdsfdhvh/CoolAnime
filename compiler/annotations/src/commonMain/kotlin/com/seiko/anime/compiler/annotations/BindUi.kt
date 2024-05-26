@@ -2,8 +2,8 @@ package com.seiko.anime.compiler.annotations
 
 import kotlin.reflect.KClass
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class CircuitInject(
+annotation class BindUi(
   val screen: KClass<*>,
 )

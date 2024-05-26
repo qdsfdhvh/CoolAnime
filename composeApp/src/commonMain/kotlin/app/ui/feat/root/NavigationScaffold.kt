@@ -1,5 +1,6 @@
 package app.ui.feat.root
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,12 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import app.ui.component.navigation.screen.Screen
 import app.ui.widget.BackButton
 import app.ui.widget.FloatingNavigationBar
 import app.ui.widget.HazeScaffold
 import app.ui.widget.LottieIcon
-import com.slack.circuit.overlay.ContentWithOverlays
-import com.slack.circuit.runtime.screen.Screen
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -116,7 +116,7 @@ fun NavigationScaffold(
           NavigationType.BOTTOM_NAVIGATION -> Unit
         }
       }
-      ContentWithOverlays(
+      Box(
         modifier = Modifier.weight(1f).fillMaxHeight(),
       ) {
         content()
