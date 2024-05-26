@@ -13,8 +13,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSVisitorVoid
-import com.seiko.anime.compiler.annotations.BindPresenter
-import com.seiko.anime.compiler.annotations.BindUi
+import com.seiko.anime.compiler.annotations.CircuitInject
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -50,7 +49,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
       codeGenerator = codeGenerator,
       logger = logger,
     )
-    val presenters = resolver.getSymbolsWithAnnotation(BIND_PRESENTER_NAME)
+    val presenters = resolver.getSymbolsWithAnnotation(CIRCUIT_INJECT_NAME)
       .filterIsInstance<KSClassDeclaration>()
       .toList()
 
@@ -58,16 +57,15 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
       codeGenerator = codeGenerator,
       logger = logger,
     )
-    val uis = resolver.getSymbolsWithAnnotation(BIND_UI_NAME)
+    val uis = resolver.getSymbolsWithAnnotation(CIRCUIT_INJECT_NAME)
       .filterIsInstance<KSFunctionDeclaration>()
       .toList()
 
     presenters.forEach { it.accept(presenterVisitor, Unit) }
     uis.forEach { it.accept(uiVisitor, Unit) }
 
-    val componentPackageName = "presentation.inject"
-    generatePresenterComponent(componentPackageName, presenters)
-    generateUiComponent(componentPackageName, uis)
+    generateBindPresenterComponent(presenters)
+    generateUiComponent(uis)
 
     return emptyList()
   }
@@ -79,7 +77,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
       val className = classDeclaration.simpleName.asString() + "Factory"
       val presenterFactoryName = "presenterFactory"
-      val annotation = classDeclaration.findAnnotationType(BindPresenter::class)
+      val annotation = classDeclaration.findAnnotationType(CircuitInject::class)
       if (annotation == null) {
         logger.error("@BindPresenter annotation not found", classDeclaration)
         return
@@ -103,6 +101,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
             -> {
               params.add(type)
             }
+
             else -> Unit
           }
         }
@@ -188,9 +187,19 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
       val className = function.simpleName.asString() + "Factory"
 
-      val annotation = function.findAnnotationType(BindUi::class)
+      val annotation = function.findAnnotationType(CircuitInject::class)
       if (annotation == null) {
         logger.error("@BindUi annotation not found", function)
+        return
+      }
+
+      val uiStateType =
+        function.parameters.firstOrNull()?.type?.resolve()?.declaration as? KSClassDeclaration
+      if (uiStateType == null || uiStateType.superTypes.none {
+          it.resolve().toClassName() == CircuitUiStateClassName
+        }
+      ) {
+        logger.error("The first parameter must be CircuitUiState", function)
         return
       }
 
@@ -220,7 +229,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                       beginControlFlow(
                         "%L<%L> { state, modifier ->",
                         uiLambdaClassName,
-                        annotation.argumentWith("state")?.toTypeName(),
+                        uiStateType.toClassName(),
                       )
                       addStatement("%L(state, modifier)", function.simpleName.asString())
                       endControlFlow()
@@ -241,14 +250,11 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     }
   }
 
-  private fun generatePresenterComponent(
-    packageName: String,
-    presenters: List<KSClassDeclaration>,
-  ) {
+  private fun generateBindPresenterComponent(presenters: List<KSClassDeclaration>) {
     if (presenters.isEmpty()) return
 
     val className = "BindPresenterComponent"
-    FileSpec.builder(packageName, className)
+    FileSpec.builder("presentation.inject", className)
       .addType(
         TypeSpec.interfaceBuilder(className)
           .apply {
@@ -282,14 +288,11 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
       )
   }
 
-  private fun generateUiComponent(
-    packageName: String,
-    uis: List<KSFunctionDeclaration>,
-  ) {
+  private fun generateUiComponent(uis: List<KSFunctionDeclaration>) {
     if (uis.isEmpty()) return
 
     val className = "BindUiComponent"
-    FileSpec.builder(packageName, className)
+    FileSpec.builder("presentation.inject", className)
       .addType(
         TypeSpec.interfaceBuilder(className)
           .apply {
@@ -324,14 +327,9 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
   }
 
   companion object {
-    private val BIND_PRESENTER_NAME =
-      requireNotNull(BindPresenter::class.qualifiedName) {
+    private val CIRCUIT_INJECT_NAME =
+      requireNotNull(CircuitInject::class.qualifiedName) {
         "Can not get qualifiedName for @BindPresenter"
-      }
-
-    private val BIND_UI_NAME =
-      requireNotNull(BindUi::class.qualifiedName) {
-        "Can not get qualifiedName for @BindUi"
       }
   }
 }

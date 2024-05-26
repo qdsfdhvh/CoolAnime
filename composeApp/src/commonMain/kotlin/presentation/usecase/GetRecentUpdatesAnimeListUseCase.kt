@@ -14,11 +14,6 @@ import presentation.component.state.toUi
 class GetRecentUpdatesAnimeListUseCase(
   private val animeRepository: AnimeRepository,
 ) : FlowUseCase<Unit, UiState<ImmutableList<AnimeShell>>>() {
-
-  init {
-    invoke()
-  }
-
   override fun createObservable(params: Unit): Flow<UiState<ImmutableList<AnimeShell>>> {
     return flow {
       emit(

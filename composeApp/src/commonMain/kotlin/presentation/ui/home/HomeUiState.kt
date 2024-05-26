@@ -16,4 +16,5 @@ data class HomeUiState(
 sealed interface HomeUiEvent : CircuitUiEvent {
   data object RefreshRecentUpdates : HomeUiEvent
   data class GotoDetail(val item: AnimeShell) : HomeUiEvent
+  data object GotoCounter : HomeUiEvent
 }

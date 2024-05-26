@@ -12,15 +12,16 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.seiko.anime.compiler.annotations.BindUi
+import com.seiko.anime.compiler.annotations.CircuitInject
 import presentation.component.state.checkState
 import presentation.route.HomeScreen
 import presentation.widget.AnimeGridHead
 import presentation.widget.ExpandedAnimeCard
 
-@BindUi(HomeScreen::class, HomeUiState::class)
+@CircuitInject(HomeScreen::class)
 @Composable
 fun HomeUi(
   state: HomeUiState,
@@ -33,7 +34,7 @@ fun HomeUi(
       .fillMaxSize()
       .windowInsetsPadding(WindowInsets.statusBars),
     horizontalArrangement = Arrangement.SpaceEvenly,
-    verticalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
   ) {
     checkState(
       state = state.recentUpdatesState,

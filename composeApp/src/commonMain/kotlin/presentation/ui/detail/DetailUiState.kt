@@ -12,6 +12,5 @@ data class DetailUiState(
 ) : CircuitUiState
 
 sealed interface DetailUiEvent : CircuitUiEvent {
-  data object Back : DetailUiEvent
   data object Request : DetailUiEvent
 }

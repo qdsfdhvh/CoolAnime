@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -35,11 +37,12 @@ import dev.chrisbanes.haze.hazeChild
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.collections.immutable.ImmutableList
+import presentation.widget.BackButton
 import presentation.widget.FloatingNavigationBar
 import presentation.widget.HazeScaffold
 import presentation.widget.LottieIcon
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
+@OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScaffold(
   windowSizeClass: WindowSizeClass,
@@ -49,6 +52,7 @@ fun NavigationScaffold(
   modifier: Modifier = Modifier,
   hazeState: HazeState = remember { HazeState() },
   isShowBar: Boolean = true,
+  onBack: () -> Unit = {},
   content: @Composable () -> Unit,
 ) {
   val navigationType = remember(windowSizeClass) {
@@ -73,6 +77,16 @@ fun NavigationScaffold(
               shape = MaterialTheme.shapes.extraLarge,
             )
             .fillMaxWidth(),
+        )
+      }
+    },
+    topBar = {
+      if (!isShowBar) {
+        TopAppBar(
+          title = {},
+          navigationIcon = {
+            BackButton(onBack = onBack)
+          },
         )
       }
     },

@@ -51,6 +51,9 @@ fun RootUi(
     },
     selectScreen = rootScreen,
     isShowBar = isShowBar,
+    onBack = {
+      navigator.pop()
+    },
     modifier = modifier,
   ) {
     NavigableCircuitContent(
