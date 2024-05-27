@@ -1,17 +1,18 @@
 package app.ui.feat.home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import app.route.CounterScreen
 import app.route.DetailScreen
 import app.route.HomeScreen
 import app.ui.component.navigation.runtime.Navigator
-import app.ui.component.state.UiState
+import app.ui.component.state.produceUiState
+import app.ui.component.state.toUi
 import com.seiko.anime.compiler.annotations.BindPresenter
 import domain.usecase.GetRecentUpdatesAnimeListUseCase
-import domain.usecase.invoke
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -22,17 +23,16 @@ fun HomePresenter(
   @Assisted navigator: Navigator,
   getRecentUpdatesAnimeListUseCase: Lazy<GetRecentUpdatesAnimeListUseCase>,
 ): HomeUiState {
-  val recentUpdatesState by getRecentUpdatesAnimeListUseCase.value.flow
-    .collectAsState(UiState.Loading)
-  LaunchedEffect(Unit) {
-    getRecentUpdatesAnimeListUseCase.value.invoke()
+  var recentUpdatesStateRefreshKey by remember { mutableIntStateOf(0) }
+  val recentUpdatesState by produceUiState(recentUpdatesStateRefreshKey) {
+    value = getRecentUpdatesAnimeListUseCase.value.invoke().toUi()
   }
   return HomeUiState(
     recentUpdatesState = recentUpdatesState,
     eventSink = { event ->
       when (event) {
         HomeUiEvent.RefreshRecentUpdates -> {
-          getRecentUpdatesAnimeListUseCase.value.invoke()
+          recentUpdatesStateRefreshKey++
         }
 
         is HomeUiEvent.GotoDetail -> {

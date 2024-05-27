@@ -9,14 +9,16 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class GetRecentUpdatesAnimeListUseCase(
+class GetWeeklyScheduleUseCase(
   private val appCoroutineDispatchers: AppCoroutineDispatchers,
   private val animeRepository: AnimeRepository,
 ) {
-  suspend operator fun invoke(): Result<ImmutableList<AnimeShell>> {
+  suspend operator fun invoke(): Result<ImmutableList<ImmutableList<AnimeShell>>> {
     return withContext(appCoroutineDispatchers.io) {
       runCatching {
-        animeRepository.filterAnimeBy(region = "日本", pageIndex = 0).toImmutableList()
+        animeRepository.getWeeklySchedule()
+          .map { it.toImmutableList() }
+          .toImmutableList()
       }
     }
   }

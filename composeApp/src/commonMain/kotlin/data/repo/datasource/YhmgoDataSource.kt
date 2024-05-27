@@ -71,6 +71,10 @@ class YhmgoDataSource(
     }.bodyAsText()
   }
 
+  suspend fun getHomePage(): String {
+    return httpClient.get("").bodyAsText()
+  }
+
   companion object {
     private const val BASE_URL = "https://www.yhmgo.com/"
   }

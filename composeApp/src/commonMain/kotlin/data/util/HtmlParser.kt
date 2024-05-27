@@ -50,6 +50,38 @@ object HtmlParser {
     }
 
   /**
+   * 适配页面：https://www.yhmgo.com/
+   */
+  fun parseWeeklySchedule(document: Document): List<List<AnimeShell>> =
+    document.select(("div.tlist")).first()!!.children()
+      .map { ul -> // 0 -> 周一
+        buildList {
+          ul.children().forEach { li ->
+            val span = li.child(0)
+            val a = li.child(1)
+            add(
+              AnimeShell(
+                id = a.attr("href")
+                  .filter { it.isDigit() }
+                  .toInt(),
+                name = a.attr("title"),
+                latestEpisode = span.child(0).ownText()
+                  .substringAfter("第")
+                  .filter { it.isDigit() }
+                  .toIntOrNull()
+                  ?: 1,
+                status = if (span.child(0).ownText().contains("完结")) {
+                  "已完结"
+                } else {
+                  "连载中"
+                },
+              ),
+            )
+          }
+        }
+      }
+
+  /**
    * 适配：
    * 第24集(完结) \ 22:00 第2集(每周一22:00更新)
    * 第1集(每周一更新) \ [OVA 01-04] \[全集]

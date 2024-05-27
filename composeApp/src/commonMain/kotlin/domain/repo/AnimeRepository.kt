@@ -14,4 +14,7 @@ interface AnimeRepository {
     pageIndex: Int = 0,
     pageSize: Int = 24,
   ): List<AnimeShell>
+
+  // 0 星期一
+  suspend fun getWeeklySchedule(): List<List<AnimeShell>>
 }
