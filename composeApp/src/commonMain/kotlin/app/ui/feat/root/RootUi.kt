@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import app.route.HomeScreen
 import app.route.MineScreen
 import app.route.ScheduleScreen
+import app.ui.component.navigation.runtime.BackStack
+import app.ui.component.navigation.runtime.BackStackEntry
 import app.ui.component.navigation.runtime.NavHost
 import app.ui.component.navigation.runtime.Navigator
 import app.ui.component.navigation.screen.Screen
@@ -18,21 +20,22 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RootUi(
+  backStack: BackStack<BackStackEntry>,
   navigator: Navigator,
   windowSizeClass: WindowSizeClass,
   modifier: Modifier = Modifier,
 ) {
-  val rootScreen by remember(navigator.backStacks) {
-    derivedStateOf { navigator.backStacks.first().screen }
+  val rootScreen by remember(backStack) {
+    derivedStateOf { backStack.first().screen }
   }
 
-  val isShowBar by remember(navigator.backStacks) {
-    derivedStateOf {
-      navigator.backStacks.last().screen.let {
-        it is HomeScreen || it is ScheduleScreen || it is MineScreen
-      }
-    }
-  }
+  // val isShowBar by remember(backStack) {
+  //   derivedStateOf {
+  //     backStack.last().screen.let {
+  //       it is HomeScreen || it is ScheduleScreen || it is MineScreen
+  //     }
+  //   }
+  // }
 
   val navigationItems = remember { buildHomeNavigationItems() }
 
@@ -47,13 +50,14 @@ fun RootUi(
       )
     },
     selectScreen = rootScreen,
-    isShowBar = isShowBar,
+    isShowBar = true,
     onBack = {
       navigator.pop()
     },
     modifier = modifier,
   ) {
     NavHost(
+      backStack = backStack,
       navigator = navigator,
       modifier = Modifier.fillMaxSize(),
     )

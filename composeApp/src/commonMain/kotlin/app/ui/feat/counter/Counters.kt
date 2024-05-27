@@ -15,13 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.CounterScreen
 import app.route.DetailScreen
-import app.ui.component.navigation.presenter.Presenter
-import app.ui.component.navigation.presenter.presenterOf
 import app.ui.component.navigation.runtime.BaseUiEvent
 import app.ui.component.navigation.runtime.BaseUiState
 import app.ui.component.navigation.runtime.Navigator
-import app.ui.component.navigation.screen.Screen
-import app.ui.component.navigation.ui.Ui
 import app.ui.component.navigation.ui.ui
 import com.seiko.anime.compiler.annotations.BindPresenter
 import com.seiko.anime.compiler.annotations.BindUi
@@ -81,32 +77,4 @@ sealed interface CounterUiEvent : BaseUiEvent {
   data object Add : CounterUiEvent
   data object Del : CounterUiEvent
   data object GotoDetail : CounterUiEvent
-}
-
-// auto generate
-
-class CounterUiFactory2 : Ui.Factory {
-  override fun create(screen: Screen): Ui<*>? {
-    return when (screen) {
-      is CounterScreen -> {
-        ui<CounterUiState> { state, modifier ->
-          CounterUi(state, modifier)
-        }
-      }
-      else -> null
-    }
-  }
-}
-
-class CounterPresenterFactory2 : Presenter.Factory {
-  override fun create(screen: Screen, navigator: Navigator): Presenter<*>? {
-    return when (screen) {
-      is CounterScreen -> {
-        presenterOf {
-          CounterPresenter(navigator)
-        }
-      }
-      else -> null
-    }
-  }
 }

@@ -9,15 +9,15 @@ import app.inject.DesktopWindowComponent
 import app.inject.create
 import app.route.HomeScreen
 import app.ui.component.navigation.runtime.Navigator
+import app.ui.component.navigation.runtime.rememberSaveableBackStack
 
 fun main() = application {
   val applicationComponent = remember {
     DesktopApplicationComponent.create()
   }
 
-  // val backStack = rememberSaveableBackStack(listOf(HomeScreen))
-  // val navigator = rememberCircuitNavigator(backStack, onRootPop = { /* no-op */ })
-  val navigator = remember { Navigator(HomeScreen) }
+  val backStack = rememberSaveableBackStack(HomeScreen)
+  val navigator = remember { Navigator(backStack) }
 
   Window(
     onCloseRequest = ::exitApplication,
@@ -25,7 +25,7 @@ fun main() = application {
     onKeyEvent = { event ->
       when {
         event.key == Key.Escape -> {
-          if (navigator.canGoBack) {
+          if (navigator.canPop) {
             navigator.pop()
             true
           } else {
@@ -40,7 +40,7 @@ fun main() = application {
       DesktopWindowComponent.create(window, applicationComponent)
     }
     windowComponent.rootContent.Content(
-      // backStack = backStack,
+      backStack = backStack,
       navigator = navigator,
       modifier = Modifier,
     )

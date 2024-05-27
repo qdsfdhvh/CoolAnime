@@ -6,6 +6,8 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import app.ui.component.navigation.runtime.BackStack
+import app.ui.component.navigation.runtime.BackStackEntry
 import app.ui.component.navigation.runtime.LocalNavigation
 import app.ui.component.navigation.runtime.Navigation
 import app.ui.component.navigation.runtime.Navigator
@@ -17,6 +19,7 @@ import me.tatarka.inject.annotations.Inject
 interface RootContent {
   @Composable
   fun Content(
+    backStack: BackStack<BackStackEntry>,
     navigator: Navigator,
     modifier: Modifier,
   )
@@ -30,6 +33,7 @@ class DefaultRootContent(
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @Composable
   override fun Content(
+    backStack: BackStack<BackStackEntry>,
     navigator: Navigator,
     modifier: Modifier,
   ) {
@@ -42,7 +46,7 @@ class DefaultRootContent(
       // CircuitCompositionLocals(circuit) {
       CoolAnimeTheme {
         RootUi(
-          // backStack = backStack,
+          backStack = backStack,
           navigator = navigator,
           windowSizeClass = windowSizeClass,
           modifier = modifier.fillMaxSize(),

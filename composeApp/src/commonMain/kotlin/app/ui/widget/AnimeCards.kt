@@ -40,9 +40,9 @@ fun ExpandedAnimeCard(
 ) {
   Column(
     modifier = modifier.clickable(
-      interactionSource = remember { MutableInteractionSource() },
-      indication = null,
-      role = Role.Button,
+      // interactionSource = remember { MutableInteractionSource() },
+      // indication = null,
+      // role = Role.Button,
       onClick = { onClick(anime.id) },
     ),
   ) {

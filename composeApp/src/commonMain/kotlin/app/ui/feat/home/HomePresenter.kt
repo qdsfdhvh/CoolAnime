@@ -12,7 +12,6 @@ import app.ui.component.state.UiState
 import com.seiko.anime.compiler.annotations.BindPresenter
 import domain.usecase.GetRecentUpdatesAnimeListUseCase
 import domain.usecase.invoke
-import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -26,10 +25,7 @@ fun HomePresenter(
   val recentUpdatesState by getRecentUpdatesAnimeListUseCase.value.flow
     .collectAsState(UiState.Loading)
   LaunchedEffect(Unit) {
-    delay(20)
-    if (recentUpdatesState is UiState.Loading) {
-      getRecentUpdatesAnimeListUseCase.value.invoke()
-    }
+    getRecentUpdatesAnimeListUseCase.value.invoke()
   }
   return HomeUiState(
     recentUpdatesState = recentUpdatesState,

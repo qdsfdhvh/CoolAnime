@@ -7,10 +7,10 @@ import androidx.compose.runtime.snapshots.StateFactoryMarker
 @Stable
 interface BackStack<T> : Iterable<T> {
   val size: Int
-  val canGoBack: Boolean
+  val canPop: Boolean
   fun push(item: T): Boolean
   fun pop(): T?
-  fun popUntil(predicate: (T) -> Boolean)
+  fun popUntil(inclusive: Boolean = false, predicate: (T) -> Boolean)
   fun replace(item: T): T?
   fun replaceAll(item: T)
   fun replaceAll(items: Collection<T>)
@@ -28,7 +28,7 @@ private class SnapshotStateBackStack<T> : BackStack<T> {
     return stacks.iterator()
   }
 
-  override val canGoBack: Boolean
+  override val canPop: Boolean
     get() = stacks.size > 1
 
   override fun push(item: T): Boolean {
@@ -36,13 +36,20 @@ private class SnapshotStateBackStack<T> : BackStack<T> {
   }
 
   override fun pop(): T? {
-    if (canGoBack) return stacks.removeLast()
+    if (canPop) return stacks.removeLast()
     return null
   }
 
-  override fun popUntil(predicate: (T) -> Boolean) {
-    while (canGoBack && !predicate(stacks.last())) {
-      stacks.removeLast()
+  override fun popUntil(inclusive: Boolean, predicate: (T) -> Boolean) {
+    while (canPop) {
+      if (predicate(stacks.last())) {
+        if (inclusive) {
+          stacks.removeLast()
+        }
+        return
+      } else {
+        stacks.removeLast()
+      }
     }
   }
 
@@ -74,3 +81,7 @@ fun <T> mutableBackStackOf(): BackStack<T> = SnapshotStateBackStack()
 @StateFactoryMarker
 fun <T> mutableBackStackOf(vararg elements: T): BackStack<T> =
   SnapshotStateBackStack<T>().also { it.replaceAll(elements.toList()) }
+
+@StateFactoryMarker
+fun <T> mutableBackStackOf(elements: Collection<T>): BackStack<T> =
+  SnapshotStateBackStack<T>().also { it.replaceAll(elements) }

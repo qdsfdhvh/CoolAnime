@@ -14,11 +14,14 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import app.ui.component.navigation.presenter.PresenterViewModel
 import app.ui.component.navigation.screen.Screen
+import app.util.platform.Parcelable
+import app.util.platform.Parcelize
 
-class BackStackEntry internal constructor(
+@Parcelize
+data class BackStackEntry internal constructor(
   val key: String,
   val screen: Screen,
-) : LifecycleOwner, ViewModelStoreOwner {
+) : Parcelable, LifecycleOwner, ViewModelStoreOwner {
 
   private val lifecycleRegistry by lazy {
     LifecycleRegistry.createUnsafe(this)
@@ -49,14 +52,16 @@ class BackStackEntry internal constructor(
     val factoryManager = LocalNavigation.current
 
     val hash = currentCompositeKeyHash
-    val hashKey = remember(hash) { hash.toString() }
-    val presenterViewModel = viewModelStore.getOrPut(key + hashKey) {
+    val viewModelKey = remember(hash) { key + hash.toString(32) }
+
+    val presenterViewModel = viewModelStore.getOrPut(viewModelKey) {
       PresenterViewModel(
         screen = screen,
         navigator = navigator,
         factoryManager = factoryManager,
       )
     }
+
     val state by presenterViewModel.bodyFlow.collectAsState()
     state?.let {
       remember { factoryManager.crateUi(screen) }?.Content(it, Modifier)
