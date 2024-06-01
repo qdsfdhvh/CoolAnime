@@ -31,11 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import app.ui.component.navigation.screen.Screen
 import app.ui.widget.BackButton
 import app.ui.widget.FloatingNavigationBar
 import app.ui.widget.HazeScaffold
 import app.ui.widget.LottieIcon
+import cafe.adriel.voyager.core.registry.ScreenProvider
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -48,7 +48,7 @@ fun NavigationScaffold(
   windowSizeClass: WindowSizeClass,
   navigationItems: ImmutableList<HomeNavigationItem>,
   onNavigationItemClicked: (HomeNavigationItem) -> Unit,
-  selectScreen: Screen,
+  selectScreen: ScreenProvider?,
   modifier: Modifier = Modifier,
   hazeState: HazeState = remember { HazeState() },
   isShowBar: Boolean = true,
@@ -127,7 +127,7 @@ fun NavigationScaffold(
 
 @Composable
 private fun HomeNavigationBar(
-  selectScreen: Screen,
+  selectScreen: ScreenProvider?,
   navigationItems: ImmutableList<HomeNavigationItem>,
   onNavigationItemClicked: (HomeNavigationItem) -> Unit,
   modifier: Modifier = Modifier,
@@ -157,7 +157,7 @@ private fun HomeNavigationBar(
 
 @Composable
 private fun HomeNavigationRail(
-  selectScreen: Screen,
+  selectScreen: ScreenProvider?,
   navigationItems: ImmutableList<HomeNavigationItem>,
   onNavigationItemClicked: (HomeNavigationItem) -> Unit,
   modifier: Modifier = Modifier,
@@ -183,7 +183,7 @@ private fun HomeNavigationRail(
 
 @Composable
 private fun HomeNavigationDrawer(
-  selectScreen: Screen,
+  selectScreen: ScreenProvider?,
   navigationItems: ImmutableList<HomeNavigationItem>,
   onNavigationItemClicked: (HomeNavigationItem) -> Unit,
   modifier: Modifier = Modifier,
@@ -213,7 +213,7 @@ private fun HomeNavigationDrawer(
 
 @Immutable
 data class HomeNavigationItem(
-  val screen: Screen,
+  val screen: ScreenProvider,
   val label: String,
   val iconPath: String,
 )

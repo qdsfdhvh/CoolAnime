@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.HomeScreen
@@ -34,7 +33,7 @@ fun HomeUi(
       .fillMaxSize()
       .windowInsetsPadding(WindowInsets.statusBars),
     horizontalArrangement = Arrangement.SpaceEvenly,
-    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+    // verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
   ) {
     checkState(
       state = state.recentUpdatesState,

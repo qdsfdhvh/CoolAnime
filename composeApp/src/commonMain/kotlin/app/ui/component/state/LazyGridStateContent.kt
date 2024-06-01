@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -21,19 +22,38 @@ fun <T> LazyGridScope.checkState(
   state: UiState<T>,
   gridContentHeight: Dp = defaultGridContentHeight,
   onRefresh: (() -> Unit)? = null,
+  loadingContent: @Composable () -> Unit = {
+    Box(
+      Modifier
+        .height(gridContentHeight)
+        .fillMaxWidth(),
+      contentAlignment = Alignment.Center,
+    ) {
+      CircularProgressIndicator()
+    }
+  },
+  failureContent: @Composable (error: Throwable) -> Unit = { error ->
+    Column(
+      Modifier
+        .height(gridContentHeight)
+        .fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+    ) {
+      onRefresh?.let {
+        Button(onRefresh) {
+          Text("重试")
+        }
+      }
+      Text(error.message.orEmpty())
+    }
+  },
   content: (data: T) -> Unit,
 ) {
   when (state) {
     UiState.Loading -> {
       item(span = { GridItemSpan(maxLineSpan) }) {
-        Box(
-          Modifier
-            .height(gridContentHeight)
-            .fillMaxWidth(),
-          contentAlignment = Alignment.Center,
-        ) {
-          CircularProgressIndicator()
-        }
+        loadingContent()
       }
     }
 
@@ -43,20 +63,7 @@ fun <T> LazyGridScope.checkState(
 
     is UiState.Failure -> {
       item(span = { GridItemSpan(maxLineSpan) }) {
-        Column(
-          Modifier
-            .height(gridContentHeight)
-            .fillMaxWidth(),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        ) {
-          onRefresh?.let {
-            Button(onRefresh) {
-              Text("重试")
-            }
-          }
-          Text(state.error.message.orEmpty())
-        }
+        failureContent(state.error)
       }
     }
   }

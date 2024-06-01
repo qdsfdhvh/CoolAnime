@@ -1,7 +1,8 @@
 package app.route
 
-import app.ui.component.navigation.screen.Screen
+import app.util.platform.Parcelable
 import app.util.platform.Parcelize
+import cafe.adriel.voyager.core.registry.ScreenProvider
 
 @Parcelize
 object HomeScreen : AppScreen("Home")
@@ -16,8 +17,8 @@ object MineScreen : AppScreen("Mine")
 data class DetailScreen(val id: Int) : AppScreen("Detail")
 
 @Parcelize
-object CounterScreen : AppScreen("Counter")
+data class CounterScreen(val count: Int) : AppScreen("Counter")
 
-abstract class AppScreen(val name: String) : Screen {
+abstract class AppScreen(val name: String) : ScreenProvider, Parcelable {
   open val arguments: Map<String, *>? = null
 }

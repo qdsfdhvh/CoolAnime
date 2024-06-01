@@ -28,6 +28,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.buildCodeBlock
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
@@ -77,21 +78,90 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
   ) : KSVisitorVoid() {
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-      val className = function.simpleName.asString() + "Factory"
-
       val annotation = function.findAnnotationType(BindPresenter::class)
       if (annotation == null) {
         logger.error("@BindPresenter annotation not found", function)
         return
       }
 
+      val uiStateType = function.returnType?.resolve()?.declaration as? KSClassDeclaration
+      if (uiStateType == null || uiStateType.isInterfaceFrom(VoyagerUiStateClassName)) {
+        logger.error("@BindPresenter return type must be VoyagerUiState", function)
+        return
+      }
+
       val screenType = annotation.argumentWith("screen")?.toTypeName()
 
-      FileSpec.builder(function.packageName.asString(), className)
+      val uiPresenterClassName = function.simpleName.asString() + "Wrapper"
+      val uiPresenterFactoryClassName = function.simpleName.asString() + "Factory"
+
+      FileSpec.builder(function.packageName.asString(), uiPresenterFactoryClassName)
+        // generate class XXXPresenter
         .addType(
-          TypeSpec.classBuilder(className)
+          TypeSpec.classBuilder(uiPresenterClassName)
+            .addAnnotation(InjectAnnotation)
+            .superclass(MoleculeUiPresenterClassName.parameterizedBy(uiStateType.toClassName()))
+            .apply {
+              val constructorParameters = mutableListOf<ParameterSpec>()
+              function.parameters.forEach { parameter ->
+                val parameterName = parameter.name?.asString().toString()
+                val parameterType = parameter.type.toTypeName()
+                constructorParameters.add(
+                  ParameterSpec.builder(
+                    parameterName,
+                    parameterType,
+                  ).build(),
+
+                )
+                addProperty(
+                  PropertySpec.builder(parameterName, parameterType)
+                    .apply {
+                      parameter.annotations.forEach {
+                        addAnnotation(it.toAnnotationSpec())
+                      }
+                    }
+                    .initializer(parameterName)
+                    .addModifiers(KModifier.PRIVATE)
+                    .build(),
+                )
+              }
+              if (constructorParameters.isNotEmpty()) {
+                primaryConstructor(
+                  FunSpec.constructorBuilder()
+                    .addParameters(constructorParameters)
+                    .build(),
+                )
+              }
+            }
+            .addFunction(
+              FunSpec.builder("present")
+                .addModifiers(KModifier.OVERRIDE)
+                .addAnnotation(ComposableAnnotation)
+                .returns(uiStateType.toClassName())
+                .addCode(
+                  buildCodeBlock {
+                    add("return %L(\n", function.simpleName.asString())
+                    withIndent {
+                      function.parameters.forEach {
+                        val parameterName = it.name?.asString().orEmpty()
+                        addStatement("%L = %L,", parameterName, parameterName)
+                      }
+                    }
+                    add(")")
+                    // endControlFlow()
+                    // addStatement("return state")
+                  },
+                )
+                .build(),
+            )
+            .build(),
+        )
+        // generate XXXPresenterFactory
+        .addType(
+          TypeSpec.classBuilder(uiPresenterFactoryClassName)
             .addAnnotation(InjectAnnotation)
             .apply {
+              val constructorParameters = mutableListOf<ParameterSpec>()
               function.parameters.forEach { parameter ->
                 if (parameter.annotations.none {
                     it.annotationType.resolve().toTypeName() == AssistedAnnotation
@@ -99,15 +169,11 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                 ) {
                   val parameterName = parameter.name?.asString().orEmpty()
                   val parameterType = parameter.type.toTypeName()
-                  primaryConstructor(
-                    FunSpec.constructorBuilder()
-                      .addParameter(
-                        ParameterSpec.builder(
-                          parameterName,
-                          parameterType,
-                        ).build(),
-                      )
-                      .build(),
+                  constructorParameters.add(
+                    ParameterSpec.builder(
+                      parameterName,
+                      parameterType,
+                    ).build(),
                   )
                   addProperty(
                     PropertySpec.builder(parameterName, parameterType)
@@ -117,16 +183,23 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                   )
                 }
               }
+              if (constructorParameters.isNotEmpty()) {
+                primaryConstructor(
+                  FunSpec.constructorBuilder()
+                    .addParameters(constructorParameters)
+                    .build(),
+                )
+              }
             }
-            .addSuperinterface(PresenterFactoryClassName)
+            .addSuperinterface(UiPresenterFactoryClassName)
             .addFunction(
               FunSpec.builder("create")
                 .addModifiers(KModifier.OVERRIDE)
-                .addParameter("screen", ScreenClassName)
-                .addParameter("navigator", NavigatorClassName)
+                .addParameter("screen", ScreenProviderClassName)
+                .addParameter("navigator", ProviderNavigatorClassName)
                 // .addParameter("context", CircuitContextClassName)
                 .returns(
-                  PresenterClassName
+                  UiPresenterClassName
                     .parameterizedBy(TypeVariableName("*"))
                     .copy(nullable = true),
                 )
@@ -134,8 +207,8 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                   buildCodeBlock {
                     beginControlFlow("return when (screen)")
                     withIndent {
-                      beginControlFlow("is %L -> %L", screenType, PresenterLambdaClassName)
-                      addStatement("%L(", function)
+                      beginControlFlow("is %L ->", screenType)
+                      addStatement("%L(", uiPresenterClassName)
                       withIndent {
                         function.parameters.forEach { parameter ->
                           val parameterName = parameter.name?.asString().orEmpty()
@@ -151,7 +224,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                                 parameterName,
                               )
 
-                              NavigatorClassName -> addStatement(
+                              ProviderNavigatorClassName -> addStatement(
                                 "%L = navigator,",
                                 parameterName,
                               )
@@ -186,8 +259,6 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
     private val logger: KSPLogger,
   ) : KSVisitorVoid() {
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-      val className = function.simpleName.asString() + "Factory"
-
       val annotation = function.findAnnotationType(BindUi::class)
       if (annotation == null) {
         logger.error("@BindUi annotation not found", function)
@@ -195,25 +266,80 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
       }
 
       val uiStateType = function.parameters.firstOrNull()?.asClassDeclaration()
-      if (uiStateType == null || uiStateType.isInterfaceFrom(BaseUiStateClassName)) {
-        logger.error("The first parameter must be CircuitUiState", function)
+      if (uiStateType == null || uiStateType.isInterfaceFrom(VoyagerUiStateClassName)) {
+        logger.error("@BindUi first parameter must be VoyagerUiState", function)
         return
       }
 
-      FileSpec.builder(function.packageName.asString(), className)
+      val uiScreenClassName = function.simpleName.asString() + "Screen"
+      val uiScreenFactoryClassName = function.simpleName.asString() + "ScreenFactory"
+
+      FileSpec.builder(function.packageName.asString(), uiScreenFactoryClassName)
+        // generate XXXUiScreen
         .addType(
-          TypeSpec.classBuilder(className)
+          TypeSpec.classBuilder(uiScreenClassName)
             .addAnnotation(InjectAnnotation)
-            .addSuperinterface(UiFactoryClassName)
+            .superclass(MoleculeUiScreenClassName.parameterizedBy(uiStateType.toClassName()))
+            .addModifiers(KModifier.DATA)
+            .apply {
+              primaryConstructor(
+                FunSpec.constructorBuilder()
+                  .addParameter(
+                    "provider",
+                    ScreenProviderClassName,
+                  )
+                  .build(),
+              )
+              addProperty(
+                PropertySpec.builder("provider", ScreenProviderClassName)
+                  .initializer("provider")
+                  .addModifiers(KModifier.OVERRIDE)
+                  .build(),
+              )
+            }
+            .addFunction(
+              FunSpec.builder("Content")
+                .addModifiers(KModifier.OVERRIDE)
+                .addAnnotation(ComposableAnnotation)
+                .addParameter("state", uiStateType.toClassName())
+                .addParameter("navigator", NavigatorClassName)
+                .addCode(
+                  buildCodeBlock {
+                    addStatement("%L(", function.simpleName.asString())
+                    withIndent {
+                      function.parameters.forEach { parameter ->
+                        val parameterName = parameter.name?.asString().orEmpty()
+                        when (parameter.type.resolve().toTypeName()) {
+                          uiStateType.toClassName() -> addStatement("%L = state,", parameterName)
+                          ModifierClassName -> addStatement("%L = %L", parameterName, ModifierClassName)
+                          ProviderNavigatorClassName -> addStatement(
+                            "%L = navigator,",
+                            parameterName,
+                          )
+
+                          else -> {
+                            logger.error("The parameter must be ${uiStateType.simpleName.asString()} or Modifier", parameter)
+                          }
+                        }
+                      }
+                    }
+                    addStatement(")")
+                  },
+                )
+                .build(),
+            )
+            .build(),
+        )
+        // generate XXXUiScreenFactory
+        .addType(
+          TypeSpec.classBuilder(uiScreenFactoryClassName)
+            .addAnnotation(InjectAnnotation)
+            .addSuperinterface(UiScreenFactoryClassName)
             .addFunction(
               FunSpec.builder("create")
                 .addModifiers(KModifier.OVERRIDE)
-                .addParameter("screen", ScreenClassName)
-                .returns(
-                  UiClassName
-                    .parameterizedBy(TypeVariableName("*"))
-                    .copy(nullable = true),
-                )
+                .addParameter("screen", ScreenProviderClassName)
+                .returns(UiScreenClassName.copy(nullable = true))
                 .addCode(
                   buildCodeBlock {
                     beginControlFlow("return when (screen)")
@@ -222,13 +348,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                         "is %L -> ",
                         annotation.argumentWith("screen")?.toTypeName(),
                       )
-                      beginControlFlow(
-                        "%L<%L> { state, modifier ->",
-                        uiLambdaClassName,
-                        uiStateType.toClassName(),
-                      )
-                      addStatement("%L(state, modifier)", function.simpleName.asString())
-                      endControlFlow()
+                      addStatement("%L(screen)", uiScreenClassName)
                       endControlFlow()
                       addStatement("else -> null")
                     }
@@ -267,7 +387,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                       "${presenter.simpleName.asString()}Factory",
                     ),
                   )
-                  .returns(PresenterFactoryClassName)
+                  .returns(UiPresenterFactoryClassName)
                   .addStatement("return factory")
                   .build(),
               )
@@ -294,7 +414,7 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
           .apply {
             uis.forEach { ui ->
               addFunction(
-                FunSpec.builder("bind${ui}Factory")
+                FunSpec.builder("bind${ui}ScreenFactory")
                   .addAnnotation(IntoSetClassName)
                   .addAnnotation(ProvidesClassName)
                   .addAnnotation(ActivityScopeClassName)
@@ -302,10 +422,10 @@ class CircuitFactoryProcessor(environment: SymbolProcessorEnvironment) : SymbolP
                     "factory",
                     ClassName(
                       ui.packageName.asString(),
-                      "${ui.simpleName.asString()}Factory",
+                      "${ui.simpleName.asString()}ScreenFactory",
                     ),
                   )
-                  .returns(UiFactoryClassName)
+                  .returns(UiScreenFactoryClassName)
                   .addStatement("return factory")
                   .build(),
               )

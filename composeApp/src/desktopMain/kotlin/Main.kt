@@ -7,17 +7,14 @@ import androidx.compose.ui.window.application
 import app.inject.DesktopApplicationComponent
 import app.inject.DesktopWindowComponent
 import app.inject.create
-import app.route.HomeScreen
-import app.ui.component.navigation.runtime.Navigator
-import app.ui.component.navigation.runtime.rememberSaveableBackStack
 
 fun main() = application {
   val applicationComponent = remember {
     DesktopApplicationComponent.create()
   }
 
-  val backStack = rememberSaveableBackStack(HomeScreen)
-  val navigator = remember { Navigator(backStack) }
+  // val backStack = rememberSaveableBackStack(ScheduleScreen)
+  // val navigator = remember { Navigator(backStack) }
 
   Window(
     onCloseRequest = ::exitApplication,
@@ -25,12 +22,13 @@ fun main() = application {
     onKeyEvent = { event ->
       when {
         event.key == Key.Escape -> {
-          if (navigator.canPop) {
-            navigator.pop()
-            true
-          } else {
-            false
-          }
+          // if (navigator.canPop) {
+          //   navigator.pop()
+          //   true
+          // } else {
+          //   false
+          // }
+          false
         }
         else -> false
       }
@@ -40,8 +38,8 @@ fun main() = application {
       DesktopWindowComponent.create(window, applicationComponent)
     }
     windowComponent.rootContent.Content(
-      backStack = backStack,
-      navigator = navigator,
+      // backStack = backStack,
+      // navigator = navigator,
       modifier = Modifier,
     )
   }

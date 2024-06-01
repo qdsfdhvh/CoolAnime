@@ -1,16 +1,16 @@
 package app.ui.feat.detail
 
 import androidx.compose.runtime.Immutable
-import app.ui.component.navigation.runtime.BaseUiEvent
-import app.ui.component.navigation.runtime.BaseUiState
+import app.ui.component.voyager.VoyagerUiEvent
+import app.ui.component.voyager.VoyagerUiState
 
 @Immutable
 data class DetailUiState(
   val id: Int,
   val content: String,
   val eventSink: (DetailUiEvent) -> Unit,
-) : BaseUiState
+) : VoyagerUiState
 
-sealed interface DetailUiEvent : BaseUiEvent {
+sealed interface DetailUiEvent : VoyagerUiEvent {
   data object Request : DetailUiEvent
 }

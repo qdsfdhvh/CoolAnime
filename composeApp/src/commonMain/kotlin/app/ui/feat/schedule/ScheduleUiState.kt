@@ -1,9 +1,9 @@
 package app.ui.feat.schedule
 
 import androidx.compose.runtime.Immutable
-import app.ui.component.navigation.runtime.BaseUiEvent
-import app.ui.component.navigation.runtime.BaseUiState
 import app.ui.component.state.UiState
+import app.ui.component.voyager.VoyagerUiEvent
+import app.ui.component.voyager.VoyagerUiState
 import domain.model.AnimeShell
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.DayOfWeek
@@ -13,9 +13,9 @@ data class ScheduleUiState(
   val selectDayOfWeek: DayOfWeek,
   val weeklySchedule: UiState<ImmutableList<ImmutableList<AnimeShell>>>,
   val eventSink: (ScheduleEvent) -> Unit,
-) : BaseUiState
+) : VoyagerUiState
 
-sealed interface ScheduleEvent : BaseUiEvent {
+sealed interface ScheduleEvent : VoyagerUiEvent {
   data object Refresh : ScheduleEvent
   data class GotoDetail(val item: AnimeShell) : ScheduleEvent
   data class SelectDayOfWeek(val dayOfWeek: DayOfWeek) : ScheduleEvent

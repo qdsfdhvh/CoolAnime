@@ -76,6 +76,7 @@ class YhmgoDataSource(
   }
 
   companion object {
-    private const val BASE_URL = "https://www.yhmgo.com/"
+    // private const val BASE_URL = "https://www.yhmgo.com/"
+    private const val BASE_URL = "https://www.yhdmw.cc/"
   }
 }

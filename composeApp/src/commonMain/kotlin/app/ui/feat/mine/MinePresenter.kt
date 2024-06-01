@@ -2,7 +2,7 @@ package app.ui.feat.mine
 
 import androidx.compose.runtime.Composable
 import app.route.MineScreen
-import app.ui.component.navigation.runtime.Navigator
+import app.ui.component.voyager.ProviderNavigator
 import com.seiko.anime.compiler.annotations.BindPresenter
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @Composable
 fun MinePresenter(
-  @Assisted navigator: Navigator,
+  @Assisted navigator: ProviderNavigator,
 ): MineUiState {
   return MineUiState(
     eventSink = { event ->

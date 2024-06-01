@@ -62,8 +62,8 @@ kotlin {
 
         implementation(libs.bundles.kotlinx)
         implementation(libs.bundles.ktor.common)
-        // implementation(libs.bundles.circuit)
         implementation(libs.bundles.lifecycle)
+        implementation(libs.bundles.voyager)
 
         implementation(projects.compiler.annotations)
 

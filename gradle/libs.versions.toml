@@ -23,8 +23,8 @@ kotlinxCoroutines = "1.8.1"
 ktor = "2.3.11"
 jetbrainsLifecycle = "2.8.0"
 kotlininject = "0.6.3"
-#circuit = "0.20.0"
 haze = "0.7.1"
+voyager = "1.1.0-beta01"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -51,11 +51,10 @@ ktor-client-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
-#circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
-#circuitx-gestureNavigation = { module = "com.slack.circuit:circuitx-gesture-navigation", version.ref = "circuit" }
-#circuit-overlay = { module = "com.slack.circuit:circuit-overlay", version.ref = "circuit" }
-#circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuit" }
-#circuit-runtime = { module = "com.slack.circuit:circuit-runtime", version.ref = "circuit" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version = "1.14.2" }
@@ -86,16 +85,15 @@ ktor-common = [
     "ktor-client-content-negotiation",
     "ktor-client-serialization-kotlinx-json",
 ]
-#circuit = [
-#    "circuit-foundation",
-#    "circuitx-gestureNavigation",
-#    "circuit-overlay",
-#    "circuit-retained",
-#    "circuit-runtime",
-#]
 lifecycle = [
     "androidx-lifecycle-runtime-compose",
     "androidx-lifecycle-viewmodel-compose",
+]
+voyager = [
+    "voyager-navigator",
+    "voyager-screenModel",
+#    "voyager-tabNavigator",
+    "voyager-transitions",
 ]
 
 [plugins]

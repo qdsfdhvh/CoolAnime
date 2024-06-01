@@ -1,12 +1,12 @@
 package app.ui.feat.mine
 
 import androidx.compose.runtime.Immutable
-import app.ui.component.navigation.runtime.BaseUiEvent
-import app.ui.component.navigation.runtime.BaseUiState
+import app.ui.component.voyager.VoyagerUiEvent
+import app.ui.component.voyager.VoyagerUiState
 
 @Immutable
 data class MineUiState(
   val eventSink: (MineEvent) -> Unit,
-) : BaseUiState
+) : VoyagerUiState
 
-sealed interface MineEvent : BaseUiEvent
+sealed interface MineEvent : VoyagerUiEvent

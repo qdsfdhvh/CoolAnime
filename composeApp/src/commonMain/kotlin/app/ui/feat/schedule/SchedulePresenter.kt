@@ -8,10 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import app.route.DetailScreen
 import app.route.ScheduleScreen
-import app.ui.component.navigation.runtime.Navigator
 import app.ui.component.state.UiState
 import app.ui.component.state.produceUiState
 import app.ui.component.state.toUi
+import app.ui.component.voyager.ProviderNavigator
 import com.seiko.anime.compiler.annotations.BindPresenter
 import domain.usecase.GetWeeklyScheduleUseCase
 import kotlinx.datetime.DayOfWeek
@@ -22,7 +22,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @Composable
 fun SchedulePresenter(
-  @Assisted navigator: Navigator,
+  @Assisted navigator: ProviderNavigator,
   getWeeklyScheduleUseCase: Lazy<GetWeeklyScheduleUseCase>,
 ): ScheduleUiState {
   var selectDayOfWeek by remember { mutableStateOf(DayOfWeek.MONDAY) }

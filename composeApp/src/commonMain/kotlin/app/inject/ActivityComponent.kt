@@ -1,8 +1,8 @@
 package app.inject
 
-import app.ui.component.navigation.presenter.Presenter
-import app.ui.component.navigation.runtime.Navigation
-import app.ui.component.navigation.ui.Ui
+import app.ui.component.voyager.UiPresenter
+import app.ui.component.voyager.UiScreen
+import app.ui.component.voyager.UiScreenRegistry
 import app.ui.feat.root.DefaultRootContent
 import app.ui.feat.root.RootContent
 import me.tatarka.inject.annotations.Provides
@@ -15,11 +15,11 @@ interface ActivityComponent : BindUiComponent, BindPresenterComponent {
 
   @ActivityScope
   @Provides
-  fun provideNavigation(
-    uiFactories: Set<Ui.Factory>,
-    presenterFactories: Set<Presenter.Factory>,
-  ): Navigation {
-    return Navigation.Builder()
+  fun provideUiScreenRegistry(
+    uiFactories: Set<UiScreen.Factory>,
+    presenterFactories: Set<UiPresenter.Factory>,
+  ): UiScreenRegistry {
+    return UiScreenRegistry.Builder()
       .addUiFactories(uiFactories)
       .addPresenterFactories(presenterFactories)
       .build()

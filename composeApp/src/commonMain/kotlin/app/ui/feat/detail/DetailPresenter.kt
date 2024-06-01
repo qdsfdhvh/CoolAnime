@@ -2,16 +2,15 @@ package app.ui.feat.detail
 
 import androidx.compose.runtime.Composable
 import app.route.DetailScreen
-import app.ui.component.navigation.runtime.Navigator
-import com.seiko.anime.compiler.annotations.BindPresenter
+import app.ui.component.voyager.ProviderNavigator
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@BindPresenter(DetailScreen::class)
+// @BindPresenter(DetailScreen::class)
 @Inject
 @Composable
 fun DetailPresenter(
-  @Assisted navigator: Navigator,
+  @Assisted navigator: ProviderNavigator,
   @Assisted screen: DetailScreen,
 ): DetailUiState {
   // val scope = rememberCoroutineScope()

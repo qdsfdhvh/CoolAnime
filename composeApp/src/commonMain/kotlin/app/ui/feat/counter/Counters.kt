@@ -15,14 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.route.CounterScreen
 import app.route.DetailScreen
-import app.ui.component.navigation.runtime.BaseUiEvent
-import app.ui.component.navigation.runtime.BaseUiState
-import app.ui.component.navigation.runtime.Navigator
-import app.ui.component.navigation.ui.ui
+import app.ui.component.voyager.ProviderNavigator
+import app.ui.component.voyager.VoyagerUiEvent
+import app.ui.component.voyager.VoyagerUiState
 import com.seiko.anime.compiler.annotations.BindPresenter
 import com.seiko.anime.compiler.annotations.BindUi
+import domain.repo.AnimeRepository
 import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 import kotlin.random.Random
 
 @BindUi(CounterScreen::class)
@@ -48,12 +47,13 @@ fun CounterUi(state: CounterUiState, modifier: Modifier) {
 }
 
 @BindPresenter(CounterScreen::class)
-@Inject
 @Composable
 fun CounterPresenter(
-  @Assisted navigator: Navigator,
+  @Assisted screen: CounterScreen,
+  @Assisted navigator: ProviderNavigator,
+  animeRepository: Lazy<AnimeRepository>,
 ): CounterUiState {
-  var count by remember { mutableIntStateOf(0) }
+  var count by remember { mutableIntStateOf(screen.count) }
   return CounterUiState(
     count = count,
     eventSink = { event ->
@@ -71,10 +71,85 @@ fun CounterPresenter(
 data class CounterUiState(
   val count: Int,
   val eventSink: (CounterUiEvent) -> Unit,
-) : BaseUiState
+) : VoyagerUiState
 
-sealed interface CounterUiEvent : BaseUiEvent {
+sealed interface CounterUiEvent : VoyagerUiEvent {
   data object Add : CounterUiEvent
   data object Del : CounterUiEvent
   data object GotoDetail : CounterUiEvent
 }
+
+//
+// ⬇️ generate codes
+//
+
+// @Inject
+// class CountUiPresenterFactory(
+//   private val presenterFactory: (CounterScreen, ProviderNavigator) -> CountUiPresenter,
+// ) : UiPresenter.Factory {
+//   override fun create(screen: ScreenProvider, navigator: ProviderNavigator): UiPresenter<*>? {
+//     return when (screen) {
+//       is CounterScreen -> {
+//         presenterFactory(screen, navigator)
+//       }
+//       else -> null
+//     }
+//   }
+// }
+//
+// @Inject
+// class CountUiPresenter(
+//   @Assisted private val screen: CounterScreen,
+//   @Assisted private val navigator: ProviderNavigator,
+//   private val animeRepository: Lazy<AnimeRepository>,
+// ) : MoleculeUiPresenter<CounterUiState>() {
+//   @Composable
+//   override fun present(): CounterUiState {
+//     return CounterPresenter(
+//       screen = screen,
+//       navigator = navigator,
+//       animeRepository = animeRepository,
+//     )
+//   }
+// }
+//
+// @Inject
+// class CounterUiScreenFactory : UiScreen.Factory {
+//   override fun create(screen: ScreenProvider): UiScreen? {
+//     return when (screen) {
+//       is CounterScreen -> {
+//         CounterUiScreen(screen)
+//       }
+//       else -> null
+//     }
+//   }
+// }
+//
+// data class CounterUiScreen(
+//   override val provider: CounterScreen
+// ) : MoleculeUiScreen<CounterUiState>() {
+//   @Composable
+//   override fun Content(state: CounterUiState, navigator: Navigator) {
+//     CounterUi(
+//       state = state,
+//       modifier = Modifier,
+//     )
+//   }
+// }
+//
+// interface CounterComponent {
+//
+//   @IntoSet
+//   @Provides
+//   @ActivityScope
+//   fun provideCounterUiPresenterFactory(
+//     factory: CountUiPresenterFactory,
+//   ): UiPresenter.Factory = factory
+//
+//   @IntoSet
+//   @Provides
+//   @ActivityScope
+//   fun provideCounterUiScreenFactory(
+//     factory: CounterUiScreenFactory,
+//   ): UiScreen.Factory = factory
+// }

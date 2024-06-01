@@ -8,19 +8,20 @@ import androidx.compose.runtime.setValue
 import app.route.CounterScreen
 import app.route.DetailScreen
 import app.route.HomeScreen
-import app.ui.component.navigation.runtime.Navigator
 import app.ui.component.state.produceUiState
 import app.ui.component.state.toUi
+import app.ui.component.voyager.ProviderNavigator
 import com.seiko.anime.compiler.annotations.BindPresenter
 import domain.usecase.GetRecentUpdatesAnimeListUseCase
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import kotlin.random.Random
 
 @BindPresenter(HomeScreen::class)
 @Inject
 @Composable
 fun HomePresenter(
-  @Assisted navigator: Navigator,
+  @Assisted navigator: ProviderNavigator,
   getRecentUpdatesAnimeListUseCase: Lazy<GetRecentUpdatesAnimeListUseCase>,
 ): HomeUiState {
   var recentUpdatesStateRefreshKey by remember { mutableIntStateOf(0) }
@@ -40,7 +41,7 @@ fun HomePresenter(
         }
 
         HomeUiEvent.GotoCounter -> {
-          navigator.push(CounterScreen)
+          navigator.push(CounterScreen(Random.nextInt()))
         }
       }
     },
