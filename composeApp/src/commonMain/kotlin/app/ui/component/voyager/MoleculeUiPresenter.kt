@@ -9,12 +9,12 @@ import cafe.adriel.voyager.core.model.screenModelScope
 
 abstract class MoleculeUiPresenter<T : VoyagerUiState> : ScreenModel, UiPresenter<T> {
   val state: State<T?> by lazy {
-    val state = mutableStateOf<T?>(null)
-    screenModelScope.launchMolecule(
-      mode = RecompositionMode.Immediate,
-      emitter = { state.value = it },
-      body = { present() },
-    )
-    state
+    mutableStateOf<T?>(null).apply {
+      screenModelScope.launchMolecule(
+        mode = RecompositionMode.Immediate,
+        emitter = { value = it },
+        body = { present() },
+      )
+    }
   }
 }
