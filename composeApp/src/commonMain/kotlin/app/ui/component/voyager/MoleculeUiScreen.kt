@@ -8,12 +8,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 
 abstract class MoleculeUiScreen<T : VoyagerUiState> : UiScreen {
-  @Suppress("UNCHECKED_CAST")
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val repository = LocalUiScreenRegistry.current
     val state by rememberScreenModel {
+      @Suppress("UNCHECKED_CAST")
       repository.createPresenter(provider, navigator) as MoleculeUiPresenter<T>
     }.state
     state?.let {

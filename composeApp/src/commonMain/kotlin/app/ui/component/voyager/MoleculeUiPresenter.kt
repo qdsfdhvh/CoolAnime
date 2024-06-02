@@ -4,10 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
-import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 
-abstract class MoleculeUiPresenter<T : VoyagerUiState> : ScreenModel, UiPresenter<T> {
+abstract class MoleculeUiPresenter<T : VoyagerUiState> : UiPresenter<T> {
   val state: State<T?> by lazy {
     mutableStateOf<T?>(null).apply {
       screenModelScope.launchMolecule(
