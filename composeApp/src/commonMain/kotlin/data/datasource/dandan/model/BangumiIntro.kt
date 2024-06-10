@@ -13,5 +13,5 @@ data class BangumiIntro(
   val airDay: Long,
   val isFavorited: Boolean,
   val isRestricted: Boolean,
-  val rating: Double
+  val rating: Double,
 )

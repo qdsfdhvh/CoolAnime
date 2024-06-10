@@ -65,10 +65,10 @@ fun ExpandedAnimeCard(
 
 @Composable
 fun NarrowAnimeCard(
-    modifier: Modifier = Modifier,
-    anime: AnimeShell,
-    subTitle: String = "第${anime.summary}话",
-    onClick: (Long) -> Unit,
+  modifier: Modifier = Modifier,
+  anime: AnimeShell,
+  subTitle: String = "第${anime.summary}话",
+  onClick: (Long) -> Unit,
 ) {
   Column(
     modifier = modifier.clickable(
