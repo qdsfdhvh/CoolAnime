@@ -14,7 +14,7 @@ object ScheduleScreen : AppScreen("Schedule")
 object MineScreen : AppScreen("Mine")
 
 @Parcelize
-data class DetailScreen(val id: Int) : AppScreen("Detail")
+data class DetailScreen(val id: Long) : AppScreen("Detail")
 
 @Parcelize
 data class CounterScreen(val count: Int) : AppScreen("Counter")

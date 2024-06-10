@@ -244,7 +244,7 @@ private fun ItemCard(
     ) {
       Text(
         modifier = Modifier.width(56.dp),
-        text = "第${animeShell.latestEpisode}话",
+        text = "第${animeShell.summary}话",
         textAlign = TextAlign.Center,
         color = darkPink60,
         style = MaterialTheme.typography.labelSmall,

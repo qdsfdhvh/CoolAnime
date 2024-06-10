@@ -6,7 +6,7 @@ import app.ui.component.voyager.VoyagerUiState
 
 @Immutable
 data class DetailUiState(
-  val id: Int,
+  val id: Long,
   val content: String,
   val eventSink: (DetailUiEvent) -> Unit,
 ) : VoyagerUiState

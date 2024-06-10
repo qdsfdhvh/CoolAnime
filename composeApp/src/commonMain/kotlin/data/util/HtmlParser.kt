@@ -18,7 +18,7 @@ object HtmlParser {
       for (li in lis) {
         val id = li.child(0).attr("href")
           .filter { it.isDigit() }
-          .toInt()
+          .toLong()
         val imgUrl = li.child(0).child(0).attr("src")
           .let { if (it.startsWith("//")) "https:$it" else it }
 
@@ -42,7 +42,7 @@ object HtmlParser {
             id = id,
             name = name,
             imageUrl = imgUrl,
-            latestEpisode = latestEpisode,
+            summary = latestEpisode.toString(),
             status = status,
           ),
         )
@@ -63,13 +63,11 @@ object HtmlParser {
               AnimeShell(
                 id = a.attr("href")
                   .filter { it.isDigit() }
-                  .toInt(),
+                  .toLong(),
                 name = a.attr("title"),
-                latestEpisode = span.child(0).ownText()
+                summary = span.child(0).ownText()
                   .substringAfter("第")
-                  .filter { it.isDigit() }
-                  .toIntOrNull()
-                  ?: 1,
+                  .filter { it.isDigit() },
                 status = if (span.child(0).ownText().contains("完结")) {
                   "已完结"
                 } else {

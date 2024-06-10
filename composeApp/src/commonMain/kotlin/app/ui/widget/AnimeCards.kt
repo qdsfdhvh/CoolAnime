@@ -36,7 +36,7 @@ import org.jetbrains.compose.resources.painterResource
 fun ExpandedAnimeCard(
   modifier: Modifier = Modifier,
   anime: AnimeShell,
-  onClick: (Int) -> Unit,
+  onClick: (Long) -> Unit,
 ) {
   Column(
     modifier = modifier.clickable(
@@ -56,7 +56,7 @@ fun ExpandedAnimeCard(
       style = MaterialTheme.typography.bodySmall,
     )
     Text(
-      text = "第${anime.latestEpisode}话",
+      text = "第${anime.summary}话",
       color = darkPink60,
       style = MaterialTheme.typography.labelSmall,
     )
@@ -65,10 +65,10 @@ fun ExpandedAnimeCard(
 
 @Composable
 fun NarrowAnimeCard(
-  modifier: Modifier = Modifier,
-  anime: AnimeShell,
-  subTitle: String = "第${anime.latestEpisode}话",
-  onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    anime: AnimeShell,
+    subTitle: String = "第${anime.summary}话",
+    onClick: (Long) -> Unit,
 ) {
   Column(
     modifier = modifier.clickable(

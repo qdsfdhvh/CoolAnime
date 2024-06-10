@@ -1,35 +1,21 @@
-package data.repo.datasource
+package data.datasource.yhdm
 
-import app.util.logging.AppLogger
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.HttpClientEngine
+import data.util.AppHttpClientFactory
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import me.tatarka.inject.annotations.Inject
-import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 @Inject
 class YhmgoDataSource(
-  engine: Lazy<HttpClientEngine>,
-  logger: AppLogger,
+  httpClientFactory: AppHttpClientFactory,
 ) {
 
   private val httpClient by lazy {
-    HttpClient(engine.value) {
+    httpClientFactory {
       defaultRequest {
         url(BASE_URL)
-      }
-      install(Logging) {
-        this.level = LogLevel.HEADERS
-        this.logger = object : KtorLogger {
-          override fun log(message: String) {
-            logger.d("yhmgo") { message }
-          }
-        }
       }
     }
   }
@@ -76,7 +62,6 @@ class YhmgoDataSource(
   }
 
   companion object {
-    // private const val BASE_URL = "https://www.yhmgo.com/"
-    private const val BASE_URL = "https://www.yhdmw.cc/"
+    private const val BASE_URL = "https://www.yhmgo.com/"
   }
 }

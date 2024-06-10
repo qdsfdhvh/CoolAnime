@@ -61,7 +61,7 @@ fun CounterPresenter(
         CounterUiEvent.Add -> count++
         CounterUiEvent.Del -> count--
         CounterUiEvent.GotoDetail -> {
-          navigator.push(DetailScreen(Random.nextInt()))
+          navigator.push(DetailScreen(Random.nextLong()))
         }
       }
     },

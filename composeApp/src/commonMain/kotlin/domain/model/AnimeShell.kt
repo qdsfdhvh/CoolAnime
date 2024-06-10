@@ -1,9 +1,9 @@
 package domain.model
 
 data class AnimeShell(
-  val id: Int,
+  val id: Long,
   val name: String,
   val imageUrl: String? = null,
-  val latestEpisode: Int,
+  val summary: String,
   val status: String,
 )
