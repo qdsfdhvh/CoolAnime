@@ -14,6 +14,7 @@ fun MapUi(
   modifier: Modifier,
 ) {
   AppMap(
+    mapState = state.mapState,
     modifier = modifier.fillMaxSize(),
   )
 }

@@ -48,6 +48,7 @@ kotlin {
     all {
       languageSettings {
         enableLanguageFeature(LanguageFeature.ExpectActualClasses.toString())
+        optIn("com.mapbox.maps.MapboxExperimental")
       }
     }
     commonMain {

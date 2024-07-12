@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import app.route.HomeScreen
 import app.route.MapScreen
 import app.route.MineScreen
-import app.route.ScheduleScreen
 import app.ui.component.voyager.LocalUiScreenRegistry
 import app.ui.component.voyager.UiScreen
 import app.ui.component.voyager.UiScreenRegistry
@@ -54,7 +53,7 @@ class DefaultRootContent(
         val windowSizeClass = calculateWindowSizeClass()
         val navigationItems = remember { buildHomeNavigationItems() }
         val initialScreen = remember {
-          uiScreenRegistry.createUi(navigationItems[0].screen)
+          uiScreenRegistry.createUi(navigationItems[1].screen)
         }
         Navigator(initialScreen) { navigator ->
           val provideNavigator = remember(navigator) {

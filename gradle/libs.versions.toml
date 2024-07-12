@@ -24,7 +24,7 @@ ktor = "2.3.11"
 jetbrainsLifecycle = "2.8.0"
 kotlininject = "0.6.3"
 haze = "0.7.1"
-voyager = "1.1.0-beta01"
+voyager = "1.1.0-beta02"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -53,7 +53,6 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
@@ -92,7 +91,6 @@ lifecycle = [
 voyager = [
     "voyager-navigator",
     "voyager-screenModel",
-#    "voyager-tabNavigator",
     "voyager-transitions",
 ]
 
