@@ -1,5 +1,8 @@
 package app.ui.component.maps.widget
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mapbox.geojson.Point
@@ -17,6 +20,13 @@ actual fun AppMap(
   MapboxMap(
     mapState = mapState,
     mapViewportState = rememberAppMapViewportState(),
+    scaleBar = {
+      ScaleBar(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+      )
+    },
+    logo = {},
+    attribution = {},
     modifier = modifier,
   )
 }

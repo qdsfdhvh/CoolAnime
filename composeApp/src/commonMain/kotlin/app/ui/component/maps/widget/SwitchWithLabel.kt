@@ -19,14 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun SwitchWithLabel(
   modifier: Modifier = Modifier,
   label: String,
   state: Boolean,
   darkOnLightTextColor: Boolean = true,
-  onStateChange: (Boolean) -> Unit
+  onStateChange: (Boolean) -> Unit,
 ) {
   val interactionSource = remember { MutableInteractionSource() }
   Row(
@@ -38,17 +37,17 @@ fun SwitchWithLabel(
         role = Role.Switch,
         onClick = {
           onStateChange(!state)
-        }
+        },
       )
       .padding(2.dp),
-    verticalAlignment = Alignment.CenterVertically
+    verticalAlignment = Alignment.CenterVertically,
 
   ) {
     Switch(
       checked = state,
       onCheckedChange = {
         onStateChange(it)
-      }
+      },
     )
     Spacer(modifier = Modifier.padding(start = 8.dp))
     Box {
@@ -58,12 +57,12 @@ fun SwitchWithLabel(
           .offset(x = 1.dp, y = 1.dp)
           .blur(radius = 1.dp),
         color = if (darkOnLightTextColor) Color.Black else Color.White, // colorResource(id = R.color.black),
-        text = label
+        text = label,
       )
       Text(
         modifier = modifier,
         color = if (darkOnLightTextColor) Color.White else Color.Black, // colorResource(id = R.color.black),
-        text = label
+        text = label,
       )
     }
   }
