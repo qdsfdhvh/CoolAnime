@@ -14,6 +14,7 @@ plugins {
   alias(libs.plugins.kotlinPluginSerialization)
   alias(libs.plugins.kotlinPluginParcelize)
   alias(libs.plugins.googleKsp)
+  alias(libs.plugins.buildconfig)
 }
 
 kotlin {
@@ -100,6 +101,8 @@ kotlin {
     androidMain {
       dependencies {
         implementation(libs.androidx.activity.compose)
+        implementation("com.mapbox.maps:android:11.5.0")
+        implementation("com.mapbox.extension:maps-compose:11.5.0")
       }
     }
     iosMain {
@@ -152,6 +155,11 @@ tasks.withType(KotlinCompilationTask::class.java).configureEach {
   if (name != "kspCommonMainKotlinMetadata") {
     dependsOn("kspCommonMainKotlinMetadata")
   }
+}
+
+buildConfig {
+  packageName("com.seiko.anime.cool")
+  buildConfigField("String", "MAPBOX_TOKEN", "\"${rootProject.properties["MAPBOX_TOKEN"] as String}\"")
 }
 
 android {

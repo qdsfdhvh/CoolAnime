@@ -107,3 +107,4 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composeMultiPl
 jetbrainsComposeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }

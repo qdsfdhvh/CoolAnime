@@ -11,6 +11,9 @@ object HomeScreen : AppScreen("Home")
 object ScheduleScreen : AppScreen("Schedule")
 
 @Parcelize
+object MapScreen : AppScreen("Map")
+
+@Parcelize
 object MineScreen : AppScreen("Mine")
 
 @Parcelize

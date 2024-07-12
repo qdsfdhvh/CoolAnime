@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import app.route.HomeScreen
+import app.route.MapScreen
 import app.route.MineScreen
 import app.route.ScheduleScreen
 import app.ui.component.voyager.LocalUiScreenRegistry
@@ -86,8 +87,8 @@ private fun buildHomeNavigationItems(): ImmutableList<HomeNavigationItem> {
       iconPath = "files/ic_home.json",
     ),
     HomeNavigationItem(
-      screen = ScheduleScreen,
-      label = "日程",
+      screen = MapScreen,
+      label = "地图",
       iconPath = "files/ic_calendar.json",
     ),
     HomeNavigationItem(
